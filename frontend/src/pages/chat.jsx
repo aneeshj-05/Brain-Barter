@@ -22,6 +22,21 @@ export default function Chat() {
   const [activeTab, setActiveTab] = useState('conversations');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [unreadCounts, setUnreadCounts] = useState({});
+  const [showVideoCallModal, setShowVideoCallModal] = useState(false);
+  const [showIncomingCallModal, setShowIncomingCallModal] = useState(false);
+  const [incomingCallData, setIncomingCallData] = useState(null);
+  const [videoCallSession, setVideoCallSession] = useState(null);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [userRole, setUserRole] = useState('');
+  const [currentSessionRole, setCurrentSessionRole] = useState('');
+  const [feedbackData, setFeedbackData] = useState({
+    clarity: '',
+    focus: '',
+    pace: '',
+    comfort: '',
+    learning: '',
+    rating: ''
+  });
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -140,7 +155,7 @@ export default function Chat() {
     }
   }, [location.state?.selectedUserId, matchedUsers]);
 
-  // Listen for incoming messages
+  // Listen for incoming messages and video call events
   useEffect(() => {
     if (!socket) return;
     
@@ -201,16 +216,73 @@ export default function Chat() {
       setMessages(prev => prev.slice(0, -1));
       alert(error.error || 'Failed to send message');
     };
+
+    const handleVideoCallInvitation = (data) => {
+      console.log('Received video call invitation:', data);
+      // Only show popup if user is currently chatting with the caller
+      if (selectedChat && selectedChat._id === data.from) {
+        setIncomingCallData(data);
+        setShowIncomingCallModal(true);
+      }
+    };
+
+    const acceptIncomingCall = () => {
+      socket.emit('videoCallResponse', {
+        sessionId: incomingCallData.sessionId,
+        accepted: true,
+        userId: user._id
+      });
+      setShowIncomingCallModal(false);
+      setIncomingCallData(null);
+    };
+
+    const declineIncomingCall = () => {
+      socket.emit('videoCallResponse', {
+        sessionId: incomingCallData.sessionId,
+        accepted: false,
+        userId: user._id
+      });
+      setShowIncomingCallModal(false);
+      setIncomingCallData(null);
+    };
+
+    const handleVideoCallAccepted = (data) => {
+  console.log('Video call accepted:', data);
+  console.log('Current session role:', currentSessionRole);
+  console.log('Data sender role:', data.senderRole);
+  
+  // Only the teacher who initiated the call (currentSessionRole === 'teacher') creates meeting link
+  // The one who accepted (data.acceptedBy) should NOT create the link
+  if (currentSessionRole === 'teacher' && data.acceptedBy !== user._id) {
+    console.log('Creating meeting link as teacher who initiated call');
+    const meetingLink = `https://meet.jit.si/brainbarter-${data.sessionId}`;
+    const videoMessage = `🎥 Video call started: ${meetingLink} | Feedback Form`;
+    handleSendMessage(videoMessage, 'video');
+  }
+};
     
     socket.on('receiveMessage', handleReceiveMessage);
     socket.on('messageSent', handleMessageSent);
     socket.on('messageError', handleMessageError);
+    socket.on('videoCallInvitation', handleVideoCallInvitation);
+    socket.on('videoCallAccepted', handleVideoCallAccepted);
+
+    // Debug socket events
+    socket.on('connect', () => {
+      console.log('Socket connected in chat:', socket.id);
+    });
+    
+    socket.on('disconnect', () => {
+      console.log('Socket disconnected in chat');
+    });
 
     return () => {
       if (socket) {
         socket.off('receiveMessage', handleReceiveMessage);
         socket.off('messageSent', handleMessageSent);
         socket.off('messageError', handleMessageError);
+        socket.off('videoCallInvitation', handleVideoCallInvitation);
+        socket.off('videoCallAccepted', handleVideoCallAccepted);
       }
     };
   }, [selectedChat, user]);
@@ -353,11 +425,56 @@ export default function Chat() {
   };
   
   const handleVideoCall = () => {
-    const meetingId = `brainbarter-${user._id}-${selectedChat._id}-${Date.now()}`;
-    const jitsiLink = `https://meet.jit.si/${meetingId}`;
-    const videoMessage = `🎥 Video call invitation: ${jitsiLink}`;
+    setUserRole('');
+    setShowVideoCallModal(true);
+  };
+
+const confirmVideoCall = async () => {
+  if (!userRole) {
+    alert('Please select your role for this session');
+    return;
+  }
+  
+  try {
+    // Store the role for this session BEFORE closing modal
+    setCurrentSessionRole(userRole);
+    console.log('Setting current session role to:', userRole);
     
+    setShowVideoCallModal(false);
+    
+    // Send invitation message
+    const videoMessage = `🎥 Video call invitation - Waiting for confirmation`;
     handleSendMessage(videoMessage, 'video');
+    
+    // Notify other user via socket
+    socket.emit('videoCallInvitation', {
+      sessionId: Date.now().toString(),
+      from: user._id,
+      to: selectedChat._id,
+      fromName: `${user.firstName} ${user.lastName}`,
+      senderRole: userRole,
+      initiatedBy: user._id // Add this to track who started the call
+    });
+    
+  } catch (error) {
+    console.error('Error creating video session:', error);
+    alert('Failed to create video session');
+  }
+};
+
+  const submitFeedback = async () => {
+    try {
+      await axios.post(`http://localhost:5000/api/video-sessions/${videoCallSession._id}/feedback`, feedbackData, {
+        headers: { 'x-auth-token': localStorage.getItem('authToken') }
+      });
+      
+      setShowFeedbackModal(false);
+      setFeedbackData({ clarity: '', focus: '', pace: '', comfort: '', learning: '', rating: '' });
+      alert('Thank you for your feedback!');
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      alert('Failed to submit feedback');
+    }
   };
   
   const handleFileUpload = async (event) => {
@@ -718,6 +835,87 @@ export default function Chat() {
       marginLeft: '0.5rem',
       animation: 'pulse 2s infinite'
     },
+    modal: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 2000
+    },
+    modalContent: {
+      backgroundColor: '#fff',
+      borderRadius: '12px',
+      padding: '2rem',
+      maxWidth: '500px',
+      width: '90%',
+      maxHeight: '80vh',
+      overflowY: 'auto'
+    },
+    modalTitle: {
+      fontSize: '1.5rem',
+      fontWeight: 'bold',
+      marginBottom: '1rem',
+      color: '#4b3b34'
+    },
+    modalButtons: {
+      display: 'flex',
+      gap: '1rem',
+      marginTop: '1.5rem'
+    },
+    modalBtn: {
+      flex: 1,
+      padding: '0.75rem',
+      borderRadius: '8px',
+      border: 'none',
+      cursor: 'pointer',
+      fontSize: '1rem',
+      fontWeight: '500'
+    },
+    confirmBtn: {
+      backgroundColor: '#22c55e',
+      color: '#fff'
+    },
+    cancelBtn: {
+      backgroundColor: '#ef4444',
+      color: '#fff'
+    },
+    feedbackQuestion: {
+      marginBottom: '1.5rem'
+    },
+    questionLabel: {
+      display: 'block',
+      fontWeight: '600',
+      marginBottom: '0.5rem',
+      color: '#4b3b34'
+    },
+    radioGroup: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.5rem'
+    },
+    radioOption: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      cursor: 'pointer'
+    },
+    radioInput: {
+      margin: 0
+    },
+    starRating: {
+      display: 'flex',
+      gap: '0.25rem',
+      fontSize: '1.5rem'
+    },
+    star: {
+      cursor: 'pointer',
+      transition: 'color 0.2s'
+    }
   };
 
   const getInitials = (user) => {
@@ -913,16 +1111,32 @@ export default function Chat() {
                       >
                         {msg.type === 'video' && msg.text.includes('meet.jit.si') ? (
                           <div>
-                            🎥 Video call invitation
+                            🎥 Video call started
                             <br />
                             <a 
-                              href={msg.text.split(': ')[1]} 
+                              href={msg.text.split(': ')[1].split(' | ')[0]} 
                               target="_blank" 
                               rel="noopener noreferrer"
                               style={{ color: msg.sent ? '#fff' : '#8b6b5c', textDecoration: 'underline' }}
                             >
                               Join Meeting
                             </a>
+                            {msg.text.includes('Feedback Form') && !msg.sent && (
+                              <>
+                                <br />
+                                <span 
+                                  onClick={() => setShowFeedbackModal(true)}
+                                  style={{ 
+                                    color: msg.sent ? '#fff' : '#8b6b5c', 
+                                    textDecoration: 'underline',
+                                    cursor: 'pointer',
+                                    fontSize: '0.9rem'
+                                  }}
+                                >
+                                  Feedback Form
+                                </span>
+                              </>
+                            )}
                           </div>
                         ) : msg.type === 'file' && msg.fileUrl ? (
                           <div>
@@ -1038,6 +1252,250 @@ export default function Chat() {
           )}
         </div>
       </div>
+
+      {/* Video Call Confirmation Modal */}
+      {showVideoCallModal && (
+        <div style={styles.modal}>
+          <div style={styles.modalContent}>
+            <h3 style={styles.modalTitle}>Start Video Call</h3>
+            <p>Are you ready to start a video call session with {getFullName(selectedChat)}?</p>
+            
+            <div style={{ margin: '1.5rem 0' }}>
+              <label style={styles.questionLabel}>Select your role for this session:</label>
+              <div style={styles.radioGroup}>
+                <label style={styles.radioOption}>
+                  <input 
+                    type="radio" 
+                    name="role" 
+                    value="teacher"
+                    checked={userRole === 'teacher'}
+                    onChange={(e) => setUserRole(e.target.value)}
+                    style={styles.radioInput}
+                  />
+                  Teacher (I will create meeting link and collect feedback)
+                </label>
+                <label style={styles.radioOption}>
+                  <input 
+                    type="radio" 
+                    name="role" 
+                    value="learner"
+                    checked={userRole === 'learner'}
+                    onChange={(e) => setUserRole(e.target.value)}
+                    style={styles.radioInput}
+                  />
+                  Learner (I will provide feedback after the session)
+                </label>
+              </div>
+            </div>
+            
+            <div style={styles.modalButtons}>
+              <button 
+                style={{...styles.modalBtn, ...styles.cancelBtn}}
+                onClick={() => {
+                  setShowVideoCallModal(false);
+                  setUserRole('');
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                style={{...styles.modalBtn, ...styles.confirmBtn}}
+                onClick={confirmVideoCall}
+              >
+                Start Call
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Incoming Video Call Modal */}
+      {showIncomingCallModal && incomingCallData && (
+        <div style={styles.modal}>
+          <div style={styles.modalContent}>
+            <h3 style={styles.modalTitle}>Incoming Video Call</h3>
+            <p>{incomingCallData.fromName} wants to start a video call session with you.</p>
+            <p>Are you ready to join the call?</p>
+            <div style={styles.modalButtons}>
+              <button 
+                style={{...styles.modalBtn, ...styles.cancelBtn}}
+                onClick={() => {
+                  socket.emit('videoCallResponse', {
+                    sessionId: incomingCallData.sessionId,
+                    accepted: false,
+                    userId: user._id,
+                    senderRole: incomingCallData.senderRole
+                  });
+                  setShowIncomingCallModal(false);
+                  setIncomingCallData(null);
+                }}
+              >
+                Decline
+              </button>
+<button 
+  style={{...styles.modalBtn, ...styles.confirmBtn}}
+  onClick={() => {
+    socket.emit('videoCallResponse', {
+      sessionId: incomingCallData.sessionId,
+      accepted: true,
+      userId: user._id,
+      acceptedBy: user._id, // Add this
+      senderRole: incomingCallData.senderRole
+    });
+    setShowIncomingCallModal(false);
+    setIncomingCallData(null);
+  }}
+>
+  Accept Call
+</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Feedback Modal */}
+      {showFeedbackModal && (
+        <div style={styles.modal}>
+          <div style={styles.modalContent}>
+            <h3 style={styles.modalTitle}>Session Feedback</h3>
+            
+            <div style={styles.feedbackQuestion}>
+              <label style={styles.questionLabel}>1. How clear were the teacher's explanations?</label>
+              <div style={styles.radioGroup}>
+                {['Very clear', 'Clear', 'Neutral', 'A bit confusing', 'Very confusing'].map(option => (
+                  <label key={option} style={styles.radioOption}>
+                    <input 
+                      type="radio" 
+                      name="clarity" 
+                      value={option}
+                      checked={feedbackData.clarity === option}
+                      onChange={(e) => setFeedbackData({...feedbackData, clarity: e.target.value})}
+                      style={styles.radioInput}
+                    />
+                    {option}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div style={styles.feedbackQuestion}>
+              <label style={styles.questionLabel}>2. Did the teacher stay focused on the topic?</label>
+              <div style={styles.radioGroup}>
+                {['Yes, completely', 'Mostly', 'Somewhat', 'Not really', 'Not at all'].map(option => (
+                  <label key={option} style={styles.radioOption}>
+                    <input 
+                      type="radio" 
+                      name="focus" 
+                      value={option}
+                      checked={feedbackData.focus === option}
+                      onChange={(e) => setFeedbackData({...feedbackData, focus: e.target.value})}
+                      style={styles.radioInput}
+                    />
+                    {option}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div style={styles.feedbackQuestion}>
+              <label style={styles.questionLabel}>3. How was the pace of the session?</label>
+              <div style={styles.radioGroup}>
+                {['Too fast', 'Slightly fast', 'Perfect', 'Slightly slow', 'Too slow'].map(option => (
+                  <label key={option} style={styles.radioOption}>
+                    <input 
+                      type="radio" 
+                      name="pace" 
+                      value={option}
+                      checked={feedbackData.pace === option}
+                      onChange={(e) => setFeedbackData({...feedbackData, pace: e.target.value})}
+                      style={styles.radioInput}
+                    />
+                    {option}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div style={styles.feedbackQuestion}>
+              <label style={styles.questionLabel}>4. How comfortable did you feel asking questions?</label>
+              <div style={styles.radioGroup}>
+                {['Very comfortable', 'Comfortable', 'Neutral', 'Slightly uncomfortable', 'Very uncomfortable'].map(option => (
+                  <label key={option} style={styles.radioOption}>
+                    <input 
+                      type="radio" 
+                      name="comfort" 
+                      value={option}
+                      checked={feedbackData.comfort === option}
+                      onChange={(e) => setFeedbackData({...feedbackData, comfort: e.target.value})}
+                      style={styles.radioInput}
+                    />
+                    {option}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div style={styles.feedbackQuestion}>
+              <label style={styles.questionLabel}>5. Did you feel you learned something useful today?</label>
+              <div style={styles.radioGroup}>
+                {['Yes, a lot', 'Yes, a little', 'Neutral', 'Not really', 'No'].map(option => (
+                  <label key={option} style={styles.radioOption}>
+                    <input 
+                      type="radio" 
+                      name="learning" 
+                      value={option}
+                      checked={feedbackData.learning === option}
+                      onChange={(e) => setFeedbackData({...feedbackData, learning: e.target.value})}
+                      style={styles.radioInput}
+                    />
+                    {option}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div style={styles.feedbackQuestion}>
+              <label style={styles.questionLabel}>6. Overall rating of the session</label>
+              <div style={styles.starRating}>
+                {[1, 2, 3, 4, 5].map(star => (
+                  <span 
+                    key={star}
+                    style={{
+                      ...styles.star,
+                      color: feedbackData.rating >= star ? '#fbbf24' : '#d1d5db',
+                      transform: feedbackData.rating >= star ? 'scale(1.1)' : 'scale(1)'
+                    }}
+                    onClick={() => setFeedbackData({...feedbackData, rating: star})}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.2)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = feedbackData.rating >= star ? 'scale(1.1)' : 'scale(1)';
+                    }}
+                  >
+                    ⭐
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div style={styles.modalButtons}>
+              <button 
+                style={{...styles.modalBtn, ...styles.cancelBtn}}
+                onClick={() => setShowFeedbackModal(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                style={{...styles.modalBtn, ...styles.confirmBtn}}
+                onClick={submitFeedback}
+              >
+                Submit Feedback
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

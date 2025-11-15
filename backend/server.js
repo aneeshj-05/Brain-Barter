@@ -17,6 +17,7 @@ const matchRoutes = require("./routes/matches");
 const sessionRoutes = require("./routes/sessions");
 const skillsRoutes = require("./routes/skills");
 const userSessionsRoutes = require("./routes/userSessions");
+const videoSessionsRoutes = require("./routes/videoSessions");
 
 // --------- MODELS USED BY SOCKETS ---------
 const Message = require("./models/Message");
@@ -78,6 +79,7 @@ app.use("/api/matches", matchRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/skills", skillsRoutes);
 app.use("/api/user-sessions", userSessionsRoutes);
+app.use("/api/video-sessions", videoSessionsRoutes);
 app.use("/api/upload", require('./routes/upload'));
 
 // --------- DATABASE CONNECTION ---------
@@ -195,6 +197,56 @@ io.on('connection', (socket) => {
     const recipientSocketId = userSockets[String(recipientId)];
     if (recipientSocketId && io.sockets.sockets.get(recipientSocketId)) {
       io.to(recipientSocketId).emit('session_update', { message });
+    }
+  });
+
+  // Video call invitation
+  socket.on('videoCallInvitation', (data) => {
+    console.log('Video call invitation received:', data);
+    const { to, sessionId, from, fromName, senderRole } = data;
+    const recipientSocketId = userSockets[String(to)];
+    console.log('Recipient socket ID:', recipientSocketId);
+    console.log('Available sockets:', Object.keys(userSockets));
+    
+    if (recipientSocketId && io.sockets.sockets.get(recipientSocketId)) {
+      console.log('Sending video call invitation to:', to);
+      io.to(recipientSocketId).emit('videoCallInvitation', {
+        sessionId,
+        from,
+        fromName,
+        senderRole
+      });
+    } else {
+      console.log('Recipient not online or socket not found');
+      // Optionally emit back to sender that recipient is offline
+      socket.emit('recipientOffline', { message: 'Recipient is not online' });
+    }
+  });
+
+  // Video call response
+  socket.on('videoCallResponse', async (data) => {
+    console.log('Video call response received:', data);
+    const { sessionId, accepted, userId, senderRole, acceptedBy } = data;
+    
+    if (accepted) {
+      console.log('Video call accepted, notifying teacher only');
+      
+      // Only notify the teacher who initiated the call
+      if (senderRole === 'teacher') {
+        for (const [teacherId, socketId] of Object.entries(userSockets)) {
+          if (teacherId !== String(acceptedBy || userId)) {
+            const teacherSocket = io.sockets.sockets.get(socketId);
+            if (teacherSocket) {
+              teacherSocket.emit('videoCallAccepted', { sessionId, senderRole });
+              console.log('Notified teacher:', teacherId);
+              break;
+            }
+          }
+        }
+      }
+    } else {
+      console.log('Video call declined');
+      io.emit('videoCallDeclined', { sessionId });
     }
   });
 

@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import io from 'socket.io-client';
 import { AuthContext } from '../context/AuthContext';
 import { useLocation } from 'react-router-dom';
+import api from '../utils/api';
 
 let socket = null;
 
@@ -478,21 +479,21 @@ const confirmVideoCall = async () => {
   };
   
   const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      try {
-        const formData = new FormData();
-        formData.append('file', file);
-        
-        const token = localStorage.getItem('authToken');
-        const response = await axios.post('http://localhost:5000/api/upload/file', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'x-auth-token': token
-          }
-        });
-        
-        const fileData = response.data;
+  const file = event.target.files[0];
+  if (file) {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Use the 'api' helper here. It already has the base URL and auth token.
+      const response = await api.post('/upload/file', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      });
+
+      const fileData = response.data;
+      // ... rest of the function
         const fileMessage = `📎 ${fileData.originalName}`;
         handleSendMessage(fileMessage, 'file', fileData.url);
       } catch (error) {

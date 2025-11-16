@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const socket = io.connect("http://localhost:5000");
+const socket = io.connect(process.env.REACT_APP_API_URL || "http://localhost:5000");
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {

@@ -23,7 +23,7 @@ export default function Landing() {
   // Inline styles remain but updated to the new theme
   const styles = {
     body: {
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      fontFamily: "'Lora', serif",
       // Use transparent so our component-level gradient can show through
       backgroundColor: 'transparent',
       color: '#3b2f2f',
@@ -32,8 +32,10 @@ export default function Landing() {
       width: '100%',
       maxWidth: '2560px',
       overflowX: 'hidden',
+
       position: 'relative',
     },
+
 
     // Top-level container that adds the gradient and safe padding
     pageWrap: {
@@ -145,7 +147,7 @@ export default function Landing() {
       marginBottom: '1rem',
       lineHeight: '1.05',
       color: '#2e1f1a',
-      fontFamily: "DM Serif Display, Georgia, serif",
+      fontFamily: "'Lora', serif",
       textShadow: '0 2px 0 rgba(255,255,255,0.02)'
     },
     heroText: {
@@ -163,8 +165,8 @@ export default function Landing() {
     },
     btnPrimary: {
       textDecoration: 'none',
-      background: 'linear-gradient(135deg, #f1e6db, #e4cfb8)',
-      color: '#3b2f2f',
+      background: 'linear-gradient(135deg, #664f46ff 0%, #694e4eff 25%, #4d271dff 50%, #523232ff 75%, #6a3e2cff 100%)',
+      color: '#F7EFE6',
       padding: '0.9rem 1.75rem',
       borderRadius: '12px',
       border: '1px solid rgba(60,40,30,0.25)',
@@ -178,23 +180,23 @@ export default function Landing() {
       boxShadow: '0 18px 40px rgba(59,47,44,0.22)'
     },
     btnSecondary: {
-  textDecoration: 'none',
-  background: 'rgba(255,255,255,0.02)',
-  color: '#4b3b34',
-  padding: '0.85rem 1.6rem',
-  borderRadius: '12px',
-  border: '1px solid rgba(80, 60, 50, 0.35)',
-  backdropFilter: 'blur(4px)',
-  fontWeight: 700,
-  cursor: 'pointer',
-  transition: 'all 0.24s ease',
-},
+      textDecoration: 'none',
+      background: 'linear-gradient(135deg, #664f46ff 0%, #694e4eff 25%, #4d271dff 50%, #523232ff 75%, #6a3e2cff 100%)',
+      color: '#F7EFE6',
+      padding: '0.85rem 1.6rem',
+      borderRadius: '12px',
+      border: '1px solid rgba(60,40,30,0.25)',
+      boxShadow: '0 8px 20px rgba(59,47,44,0.18)',
+      fontWeight: 700,
+      cursor: 'pointer',
+      transition: 'transform 0.24s ease, box-shadow 0.24s ease',
+    },
 
 
     // How It Works
     howItWorks: {
       padding: '5rem 1.5rem',
-      background: 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.02))',
+      background: 'linear-gradient(135deg, #664f46ff 0%, #694e4eff 25%, #4d271dff 50%, #523232ff 75%, #6a3e2cff 100%)',
       zIndex: 2
     },
     container: {
@@ -208,6 +210,14 @@ export default function Landing() {
       marginBottom: '3rem',
       color: '#2e1f1a'
     },
+    sectionTitleLight: {
+      fontSize: '2.2rem',
+      fontWeight: '700',
+      textAlign: 'center',
+      marginBottom: '3rem',
+      color: '#F7EFE6',
+      textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+    },
     steps: {
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
@@ -219,7 +229,22 @@ export default function Landing() {
       borderRadius: '12px',
       background: 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02))',
       boxShadow: '0 10px 30px rgba(45,34,30,0.08)',
-      border: '1px solid rgba(16,10,8,0.04)'
+      border: '1px solid rgba(16,10,8,0.04)',
+      transform: 'translateX(100px)',
+      opacity: 0,
+      transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+    },
+    stepDark: {
+      textAlign: 'center',
+      padding: '1.5rem',
+      borderRadius: '12px',
+      background: 'linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+      boxShadow: '0 15px 35px rgba(0,0,0,0.3)',
+      border: '1px solid rgba(255,255,255,0.1)',
+      backdropFilter: 'blur(10px)',
+      transform: 'translateX(100px)',
+      opacity: 0,
+      transition: 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
     },
     stepIcon: {
       backgroundColor: '#3b2f2f',
@@ -238,8 +263,19 @@ export default function Landing() {
       marginBottom: '0.5rem',
       color: '#3b2f2f'
     },
+    stepTitleLight: {
+      fontSize: '1.125rem',
+      fontWeight: '700',
+      marginBottom: '0.5rem',
+      color: '#F7EFE6'
+    },
     stepText: {
       color: '#4b3933',
+      fontSize: '0.99rem',
+      lineHeight: '1.6'
+    },
+    stepTextLight: {
+      color: '#E0D5CC',
       fontSize: '0.99rem',
       lineHeight: '1.6'
     },
@@ -251,33 +287,41 @@ export default function Landing() {
     },
     featuresGrid: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-      gap: '1.5rem'
+      gridTemplateColumns: 'repeat(3, 1fr)',
+      gap: '2rem',
+      '@media (max-width: 768px)': {
+        gridTemplateColumns: '1fr'
+      }
     },
     featureCard: {
       padding: '1.5rem',
       borderRadius: '12px',
-      background: 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02))',
-      boxShadow: '0 8px 24px rgba(40,30,26,0.06)',
-      border: '1px solid rgba(20,12,10,0.04)'
+      background: 'linear-gradient(135deg, #664f46ff 0%, #694e4eff 25%, #4d271dff 50%, #523232ff 75%, #6a3e2cff 100%)',
+      boxShadow: '0 15px 35px rgba(0,0,0,0.3)',
+      border: '1px solid rgba(255,255,255,0.1)',
+      backdropFilter: 'blur(10px)',
+      transform: 'translateX(100px)',
+      opacity: 0,
+      transition: 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
     },
     featureTitle: {
-      fontSize: '1.125rem',
+      fontSize: '1.3rem',
       fontWeight: '700',
-      color: '#2e1f1a',
-      marginBottom: '0.5rem',
+      color: '#F7EFE6',
+      marginBottom: '0.75rem',
       textAlign: 'center'
     },
     featureText: {
-      fontSize: '0.98rem',
-      color: '#49322c',
-      textAlign: 'center'
+      fontSize: '1.1rem',
+      color: '#E0D5CC',
+      textAlign: 'center',
+      lineHeight: '1.6'
     },
 
     // CTA / Footer
     cta: {
-      padding: '4rem 1.5rem',
-      background: 'linear-gradient(180deg, rgba(61,44,38,0.06), rgba(61,44,38,0.08))',
+      padding: '6rem 1.5rem',
+      background: 'linear-gradient(180deg, rgba(157, 123, 110, 0.06), rgba(152, 122, 113, 0.08))',
       textAlign: 'center'
     },
     ctaTitle: {
@@ -288,11 +332,11 @@ export default function Landing() {
     },
     ctaText: {
       fontSize: '1rem',
-      color: '#3b2f2f',
+      color: '#251c1cff',
       marginBottom: '1.5rem'
     },
     footer: {
-      padding: '3rem 1.5rem',
+      padding: '2rem 1.5rem',
       backgroundColor: '#3b2f2f',
       color: '#f4ebe0',
       zIndex: 2,
@@ -300,8 +344,14 @@ export default function Landing() {
     },
     footerGrid: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-      gap: '1rem'
+      gridTemplateColumns: 'repeat(4, 1fr)',
+      gap: '2rem',
+      '@media (max-width: 768px)': {
+        gridTemplateColumns: 'repeat(2, 1fr)'
+      },
+      '@media (max-width: 480px)': {
+        gridTemplateColumns: '1fr'
+      }
     },
     footerTitle: {
       marginBottom: '0.5rem',
@@ -320,9 +370,30 @@ export default function Landing() {
   // small helper for button hover effects using inline style merge
   const merge = (a, b) => ({ ...a, ...b });
 
-  // local state for a tiny hover visual on the hero image and buttons
+  // local state for hover effects and animations
   const [heroHover, setHeroHover] = React.useState(false);
   const [primaryHover, setPrimaryHover] = React.useState(false);
+  const [isVisible, setIsVisible] = React.useState(false);
+
+  // Intersection Observer for animations
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.transform = 'translateX(0)';
+            entry.target.style.opacity = '1';
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const cards = document.querySelectorAll('.animate-card');
+    cards.forEach((card) => observer.observe(card));
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div style={styles.body}>
@@ -331,33 +402,65 @@ export default function Landing() {
         <div style={styles.noiseOverlay} aria-hidden="true" />
         <div style={styles.heroGlow} aria-hidden="true" />
 
-        {/* small injected CSS for animations & responsive fixes */}
+        {/* Enhanced CSS for animations & responsive design */}
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;600;700&display=swap');
+          @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap');
+          
+          * {
+            font-family: 'Lora', serif !important;
+          }
+
+          /* Hide scrollbar */
+          html, body {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+          }
+          
+          html::-webkit-scrollbar, body::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+            display: none; /* Chrome, Safari, Opera */
+          }
 
           .fade-up {
             opacity: 0;
-            transform: translateY(18px);
-            animation: fadeUp 0.9s forwards;
+            transform: translateY(30px);
+            animation: fadeUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
           }
-          .fade-up.delay-1 { animation-delay: 0.12s; }
-          .fade-up.delay-2 { animation-delay: 0.22s; }
-          .fade-up.delay-3 { animation-delay: 0.32s; }
+          .fade-up.delay-1 { animation-delay: 0.2s; }
+          .fade-up.delay-2 { animation-delay: 0.4s; }
+          .fade-up.delay-3 { animation-delay: 0.6s; }
 
           @keyframes fadeUp {
             to { opacity: 1; transform: translateY(0); }
           }
+
+          .animate-card {
+            transition-delay: 0.3s;
+          }
+          .animate-card:nth-child(2) { transition-delay: 0.6s; }
+          .animate-card:nth-child(3) { transition-delay: 0.9s; }
+          .animate-card:nth-child(4) { transition-delay: 1.2s; }
+          .animate-card:nth-child(5) { transition-delay: 1.5s; }
+          .animate-card:nth-child(6) { transition-delay: 1.8s; }
 
           @media (max-width: 880px) {
             .heroTitle { font-size: 2rem !important; text-align: center; }
             .heroText { text-align: center; }
           }
 
-          /* make sure imgs are crisp on retina */
+          @media (max-width: 768px) {
+            .features-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+
           img { image-rendering: auto; -webkit-font-smoothing: antialiased; }
 
-          /* subtle hover shadow for cards */
-          .card-hover:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(20,12,10,0.1); }
+          .card-hover:hover { 
+            transform: translateY(-6px) !important; 
+            box-shadow: 0 18px 40px rgba(20,12,10,0.1) !important;
+          }
         `}</style>
 
         {/* Navigation (kept as your Navbar component so logic remains same) */}
@@ -384,22 +487,22 @@ export default function Landing() {
                 </Link>
 
                 <button
-  style={styles.btnSecondary}
-  onMouseEnter={(e) => {
-    e.target.style.background = 'rgba(240, 220, 200, 0.1)';
-    e.target.style.border = '1px solid rgba(80, 60, 50, 0.5)';
-  }}
-  onMouseLeave={(e) => {
-    e.target.style.background = 'rgba(255,255,255,0.02)';
-    e.target.style.border = '1px solid rgba(80, 60, 50, 0.35)';
-  }}
-  onClick={() => {
-    const el = document.getElementById('how-it-works');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  }}
->
-  See How It Works
-</button>
+                  style={styles.btnSecondary}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-3px)';
+                    e.target.style.boxShadow = '0 18px 40px rgba(59,47,44,0.22)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 8px 20px rgba(59,47,44,0.18)';
+                  }}
+                  onClick={() => {
+                    const el = document.getElementById('how-it-works');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  See How It Works
+                </button>
 
               </div>
             </div>
@@ -421,37 +524,37 @@ export default function Landing() {
         {/* How It Works */}
         <section id="how-it-works" style={styles.howItWorks} className="fade-up delay-2">
           <div style={styles.container}>
-            <h2 style={styles.sectionTitle}>How Brain Barter Works</h2>
+            <h2 style={styles.sectionTitleLight}>How Brain Barter Works</h2>
 
             <div style={styles.steps}>
-              <div style={styles.step} className="card-hover">
+              <div style={styles.stepDark} className="card-hover animate-card">
                 <div style={styles.stepIcon}>
                   <svg width="28" height="28" fill="none" stroke="#F7EFE6" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
                 </div>
-                <h3 style={styles.stepTitle}>1. Offer Your Skill</h3>
-                <p style={styles.stepText}>Create a profile and list the skills you're willing to teach. Make a real impact with your expertise.</p>
+                <h3 style={styles.stepTitleLight}>1. Offer Your Skill</h3>
+                <p style={styles.stepTextLight}>Create a profile and list the skills you're willing to teach. Make a real impact with your expertise.</p>
               </div>
 
-              <div style={styles.step} className="card-hover">
+              <div style={styles.stepDark} className="card-hover animate-card">
                 <div style={styles.stepIcon}>
                   <svg width="28" height="28" fill="none" stroke="#F7EFE6" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
-                <h3 style={styles.stepTitle}>2. Find a Skill</h3>
-                <p style={styles.stepText}>Browse or search for skills you want to learn. Connect with experts in your area.</p>
+                <h3 style={styles.stepTitleLight}>2. Find a Skill</h3>
+                <p style={styles.stepTextLight}>Browse or search for skills you want to learn. Connect with experts in your area.</p>
               </div>
 
-              <div style={styles.step} className="card-hover">
+              <div style={styles.stepDark} className="card-hover animate-card">
                 <div style={styles.stepIcon}>
                   <svg width="28" height="28" fill="none" stroke="#F7EFE6" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 715.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
-                <h3 style={styles.stepTitle}>3. Exchange & Grow</h3>
-                <p style={styles.stepText}>Arrange a barter. Share your knowledge, learn something new, and build lasting connections.</p>
+                <h3 style={styles.stepTitleLight}>3. Exchange & Grow</h3>
+                <p style={styles.stepTextLight}>Arrange a barter. Share your knowledge, learn something new, and build lasting connections.</p>
               </div>
             </div>
           </div>
@@ -462,33 +565,33 @@ export default function Landing() {
           <div style={styles.container}>
             <h2 style={styles.sectionTitle}>Why Choose Brain Barter?</h2>
 
-            <div style={styles.featuresGrid}>
-              <div style={styles.featureCard} className="card-hover">
+            <div style={styles.featuresGrid} className="features-grid">
+              <div style={styles.featureCard} className="card-hover animate-card">
                 <h3 style={styles.featureTitle}>Free Learning</h3>
                 <p style={styles.featureText}>No monetary transactions. Exchange skills directly and remove financial barriers to learning.</p>
               </div>
 
-              <div style={styles.featureCard} className="card-hover">
+              <div style={styles.featureCard} className="card-hover animate-card">
                 <h3 style={styles.featureTitle}>Smart Matching</h3>
                 <p style={styles.featureText}>Our intelligent algorithm connects you with the perfect skill exchange partners.</p>
               </div>
 
-              <div style={styles.featureCard} className="card-hover">
+              <div style={styles.featureCard} className="card-hover animate-card">
                 <h3 style={styles.featureTitle}>Trust & Safety</h3>
                 <p style={styles.featureText}>Verified profiles, ratings, and reviews ensure quality and accountable exchanges.</p>
               </div>
 
-              <div style={styles.featureCard} className="card-hover">
+              <div style={styles.featureCard} className="card-hover animate-card">
                 <h3 style={styles.featureTitle}>Flexible Credits</h3>
                 <p style={styles.featureText}>Earn credits by teaching, use them to learn any skill. No direct reciprocity required.</p>
               </div>
 
-              <div style={styles.featureCard} className="card-hover">
+              <div style={styles.featureCard} className="card-hover animate-card">
                 <h3 style={styles.featureTitle}>Built-in Communication</h3>
                 <p style={styles.featureText}>Integrated messaging and scheduling tools make coordinating sessions seamless.</p>
               </div>
 
-              <div style={styles.featureCard} className="card-hover">
+              <div style={styles.featureCard} className="card-hover animate-card">
                 <h3 style={styles.featureTitle}>Community Driven</h3>
                 <p style={styles.featureText}>Join a network of learners and teachers building meaningful connections.</p>
               </div>
@@ -501,7 +604,14 @@ export default function Landing() {
           <div style={styles.container}>
             <h2 style={styles.ctaTitle}>Ready to Start Your Learning Journey?</h2>
             <p style={styles.ctaText}>Join thousands of learners and teachers in our growing community.</p>
-            <Link to="/auth" style={{ ...styles.btnPrimary, marginTop: 8 }}>Join Brain Barter Today!</Link>
+            <Link 
+              to="/auth" 
+              style={merge(styles.btnPrimary, primaryHover ? styles.btnPrimaryHover : {}, { marginTop: 8 })}
+              onMouseEnter={() => setPrimaryHover(true)}
+              onMouseLeave={() => setPrimaryHover(false)}
+            >
+              Join Brain Barter Today!
+            </Link>
           </div>
         </section>
 
@@ -516,23 +626,23 @@ export default function Landing() {
 
               <div>
                 <h4 style={styles.footerTitle}>Platform</h4>
-                <a href="#" style={styles.footerLink}>Browse Skills</a>
-                <a href="#how-it-works" style={styles.footerLink}>How It Works</a>
-                <a href="#" style={styles.footerLink}>Success Stories</a>
+                <a href="#" style={styles.footerLink} className="footer-link">Browse Skills</a>
+                <a href="#how-it-works" style={styles.footerLink} className="footer-link">How It Works</a>
+                <a href="#" style={styles.footerLink} className="footer-link">Success Stories</a>
               </div>
 
               <div>
                 <h4 style={styles.footerTitle}>Community</h4>
-                <a href="#" style={styles.footerLink}>Guidelines</a>
-                <a href="#" style={styles.footerLink}>Safety</a>
-                <a href="#" style={styles.footerLink}>Support</a>
+                <a href="#" style={styles.footerLink} className="footer-link">Guidelines</a>
+                <a href="#" style={styles.footerLink} className="footer-link">Safety</a>
+                <a href="#" style={styles.footerLink} className="footer-link">Support</a>
               </div>
 
               <div>
                 <h4 style={styles.footerTitle}>Company</h4>
-                <a href="#" style={styles.footerLink}>About Us</a>
-                <a href="#" style={styles.footerLink}>Contact</a>
-                <a href="#" style={styles.footerLink}>Privacy</a>
+                <a href="#" style={styles.footerLink} className="footer-link">About Us</a>
+                <a href="#" style={styles.footerLink} className="footer-link">Contact</a>
+                <a href="#" style={styles.footerLink} className="footer-link">Privacy</a>
               </div>
             </div>
 

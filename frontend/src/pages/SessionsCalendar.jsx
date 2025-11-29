@@ -213,23 +213,25 @@ const SessionsCalendar = () => {
     main: {
       flex: 1,
       overflowY: 'auto',
-      padding: '2rem',
-      maxWidth: '1200px',
+      padding: '0.5rem 2rem',
+      maxWidth: '1400px',
       margin: '0 auto',
       width: '100%',
       direction: 'ltr',
       scrollbarWidth: 'none',
       msOverflowStyle: 'none',
       display: 'flex',
-      gap: '2rem'
+      gap: '1.5rem',
+      height: 'calc(100vh - 80px)'
     },
     leftPanel: {
-      flex: '0 0 60%',
+      flex: '0 0 65%',
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      height: 'fit-content'
     },
     rightPanel: {
-      flex: '0 0 35%',
+      flex: '0 0 32%',
       display: 'flex',
       flexDirection: 'column'
     },
@@ -237,7 +239,7 @@ const SessionsCalendar = () => {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: '2rem'
+      marginBottom: '0.5rem'
     },
     monthNav: {
       display: 'flex',
@@ -264,20 +266,20 @@ const SessionsCalendar = () => {
       gap: '1px',
       backgroundColor: '#e0d5cc',
       borderRadius: '12px',
-      overflow: 'hidden',
-      marginBottom: '2rem'
+      overflow: 'hidden'
     },
     dayHeader: {
       backgroundColor: '#8b6b5c',
       color: '#fff',
-      padding: '1rem',
+      padding: '0.75rem',
       textAlign: 'center',
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+      fontSize: '0.9rem'
     },
     dayCell: {
       backgroundColor: '#fff',
-      minHeight: '80px',
-      padding: '0.5rem',
+      minHeight: '70px',
+      padding: '0.4rem',
       cursor: 'pointer',
       position: 'relative'
     },
@@ -392,7 +394,10 @@ const SessionsCalendar = () => {
     sessionsList: {
       backgroundColor: '#fff',
       borderRadius: '12px',
-      padding: '1.5rem'
+      padding: '1rem',
+      height: 'fit-content',
+      maxHeight: '600px',
+      overflowY: 'auto'
     },
     sessionCard: {
       border: '1px solid #e0d5cc',

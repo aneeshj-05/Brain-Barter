@@ -171,6 +171,7 @@ export default function Landing() {
       borderRadius: '12px',
       border: '1px solid rgba(60,40,30,0.25)',
       boxShadow: '0 8px 20px rgba(59,47,44,0.18)',
+      fontSize: '1rem',
       fontWeight: 700,
       cursor: 'pointer',
       transition: 'transform 0.24s ease, box-shadow 0.24s ease'
@@ -183,10 +184,11 @@ export default function Landing() {
       textDecoration: 'none',
       background: 'linear-gradient(135deg, #664f46ff 0%, #694e4eff 25%, #4d271dff 50%, #523232ff 75%, #6a3e2cff 100%)',
       color: '#F7EFE6',
-      padding: '0.85rem 1.6rem',
+      padding: '0.9rem 1.75rem',
       borderRadius: '12px',
       border: '1px solid rgba(60,40,30,0.25)',
       boxShadow: '0 8px 20px rgba(59,47,44,0.18)',
+      fontSize: '1rem',
       fontWeight: 700,
       cursor: 'pointer',
       transition: 'transform 0.24s ease, box-shadow 0.24s ease',
@@ -321,8 +323,10 @@ export default function Landing() {
     // CTA / Footer
     cta: {
       padding: '6rem 1.5rem',
-      background: 'linear-gradient(180deg, rgba(157, 123, 110, 0.06), rgba(152, 122, 113, 0.08))',
-      textAlign: 'center'
+      background: 'linear-gradient(180deg, rgba(157, 123, 110, 0.15), rgba(152, 122, 113, 0.2))',
+      textAlign: 'center',
+      borderTop: '1px solid rgba(59, 47, 44, 0.1)',
+      position: 'relative'
     },
     ctaTitle: {
       fontSize: '2rem',
@@ -336,7 +340,7 @@ export default function Landing() {
       marginBottom: '1.5rem'
     },
     footer: {
-      padding: '2rem 1.5rem',
+      padding: '1.5rem 1.5rem',
       backgroundColor: '#3b2f2f',
       color: '#f4ebe0',
       zIndex: 2,
@@ -550,7 +554,7 @@ export default function Landing() {
               <div style={styles.stepDark} className="card-hover animate-card">
                 <div style={styles.stepIcon}>
                   <svg width="28" height="28" fill="none" stroke="#F7EFE6" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 715.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
                   </svg>
                 </div>
                 <h3 style={styles.stepTitleLight}>3. Exchange & Grow</h3>
@@ -618,37 +622,7 @@ export default function Landing() {
         {/* Footer */}
         <footer style={styles.footer}>
           <div style={styles.container}>
-            <div style={styles.footerGrid}>
-              <div>
-                <h3 style={styles.footerTitle}>Brain Barter</h3>
-                <p style={{ color: '#e6d6c9' }}>Democratizing knowledge sharing through community-driven skill exchanges.</p>
-              </div>
-
-              <div>
-                <h4 style={styles.footerTitle}>Platform</h4>
-                <a href="#" style={styles.footerLink} className="footer-link">Browse Skills</a>
-                <a href="#how-it-works" style={styles.footerLink} className="footer-link">How It Works</a>
-                <a href="#" style={styles.footerLink} className="footer-link">Success Stories</a>
-              </div>
-
-              <div>
-                <h4 style={styles.footerTitle}>Community</h4>
-                <a href="#" style={styles.footerLink} className="footer-link">Guidelines</a>
-                <a href="#" style={styles.footerLink} className="footer-link">Safety</a>
-                <a href="#" style={styles.footerLink} className="footer-link">Support</a>
-              </div>
-
-              <div>
-                <h4 style={styles.footerTitle}>Company</h4>
-                <a href="#" style={styles.footerLink} className="footer-link">About Us</a>
-                <a href="#" style={styles.footerLink} className="footer-link">Contact</a>
-                <a href="#" style={styles.footerLink} className="footer-link">Privacy</a>
-              </div>
-            </div>
-
-            <div style={{ marginTop: '1.25rem', color: '#d8c9bd' }}>
-              <p>&copy; 2025 Brain Barter. All rights reserved.</p>
-            </div>
+            <p style={{ textAlign: 'center', color: '#B8A394', fontSize: '0.9rem' }}>&copy; 2025 Brain Barter. All rights reserved.</p>
           </div>
         </footer>
       </div>

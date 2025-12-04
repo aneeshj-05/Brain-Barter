@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import axios from 'axios';
-import { Send, Search, Users, MessageCircle, Paperclip, Smile, Video, Trash2, UserX, MoreVertical, Home, User, Book, Zap, Bell } from "lucide-react";
+import { Send, Search, Users, MessageCircle, Paperclip, Smile, Video, Trash2, UserX, MoreVertical, Home, User, Book, Calendar, Bell } from "lucide-react";
 import Navbar from '../components/Navbar';
 import io from 'socket.io-client';
 import { AuthContext } from '../context/AuthContext';
@@ -1700,7 +1700,7 @@ const unblockUser = async (userId) => {
                 setHoveredButton(null);
               }}
             >
-              <Zap size={24} />
+              <Calendar size={24} />
               {hoveredButton === 'sessions' && (
                 <div style={{
                   position: 'absolute',

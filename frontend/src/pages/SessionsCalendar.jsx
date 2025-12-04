@@ -22,6 +22,9 @@ const SessionsCalendar = () => {
     type: 'teaching'
   });
   const [sessionFilter, setSessionFilter] = useState('upcoming');
+  const [showTimePicker, setShowTimePicker] = useState(null);
+  const [tempTime, setTempTime] = useState({ hour: '09', minute: '00', period: 'AM' });
+  const [showFilterOptions, setShowFilterOptions] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -180,10 +183,15 @@ const SessionsCalendar = () => {
     navbar: {
       backgroundColor: '#4b3b34',
       color: '#f5ede6',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
       padding: '1rem 2rem',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: '50px'
     },
     backBtn: {
       backgroundColor: 'transparent',
@@ -213,7 +221,7 @@ const SessionsCalendar = () => {
     main: {
       flex: 1,
       overflowY: 'auto',
-      padding: '0.5rem 2rem',
+      padding: '1rem 2rem',
       maxWidth: '1400px',
       margin: '0 auto',
       width: '100%',
@@ -222,13 +230,13 @@ const SessionsCalendar = () => {
       msOverflowStyle: 'none',
       display: 'flex',
       gap: '1.5rem',
-      height: 'calc(100vh - 80px)'
+      height: 'calc(100vh - 82px)'
     },
     leftPanel: {
       flex: '0 0 65%',
       display: 'flex',
       flexDirection: 'column',
-      height: 'fit-content'
+      height: '100%'
     },
     rightPanel: {
       flex: '0 0 32%',
@@ -266,7 +274,9 @@ const SessionsCalendar = () => {
       gap: '1px',
       backgroundColor: '#e0d5cc',
       borderRadius: '12px',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      flex: 1,
+      height: 'calc(100% - 80px)'
     },
     dayHeader: {
       backgroundColor: '#8b6b5c',
@@ -278,23 +288,34 @@ const SessionsCalendar = () => {
     },
     dayCell: {
       backgroundColor: '#fff',
-      minHeight: '70px',
+      minHeight: '100px',
       padding: '0.4rem',
       cursor: 'pointer',
-      position: 'relative'
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column'
     },
     dayNumber: {
       fontWeight: 'bold',
       marginBottom: '0.5rem'
     },
     sessionItem: {
-      backgroundColor: '#8b6b5c',
+      position: 'absolute',
+      bottom: '4px',
+      right: '4px',
+      width: '12px',
+      height: '12px',
+      borderRadius: '50%',
+      background: 'linear-gradient(135deg, #8b6b5c, #6d5447)',
+      boxShadow: '0 2px 4px rgba(139, 107, 92, 0.4)',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '8px',
       color: '#fff',
-      padding: '0.25rem 0.5rem',
-      borderRadius: '4px',
-      fontSize: '0.75rem',
-      marginBottom: '0.25rem',
-      cursor: 'pointer'
+      fontWeight: 'bold',
+      transition: 'all 0.3s ease'
     },
     modal: {
       position: 'fixed',
@@ -392,21 +413,28 @@ const SessionsCalendar = () => {
       textAlign: 'center'
     },
     sessionsList: {
-      backgroundColor: '#fff',
-      borderRadius: '12px',
-      padding: '1rem',
+      background: 'linear-gradient(135deg, #fff 0%, #f8f5f2 100%)',
+      borderRadius: '16px',
+      padding: '1.5rem',
       height: 'fit-content',
       maxHeight: '600px',
-      overflowY: 'auto'
+      overflowY: 'auto',
+      boxShadow: '0 8px 32px rgba(139, 107, 92, 0.15)',
+      border: '1px solid rgba(139, 107, 92, 0.1)'
     },
     sessionCard: {
-      border: '1px solid #e0d5cc',
-      borderRadius: '8px',
-      padding: '1rem',
+      background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,245,242,0.7) 100%)',
+      border: '1px solid rgba(139, 107, 92, 0.15)',
+      borderRadius: '12px',
+      padding: '1.25rem',
       marginBottom: '1rem',
       display: 'flex',
       justifyContent: 'space-between',
-      alignItems: 'center'
+      alignItems: 'center',
+      transition: 'all 0.3s ease',
+      boxShadow: '0 2px 8px rgba(139, 107, 92, 0.08)',
+      position: 'relative',
+      overflow: 'hidden'
     },
     sessionActions: {
       display: 'flex',
@@ -418,6 +446,94 @@ const SessionsCalendar = () => {
       cursor: 'pointer',
       padding: '0.5rem',
       borderRadius: '4px'
+    },
+    timePickerOverlay: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0,0,0,0.3)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 2000
+    },
+    clockContainer: {
+      backgroundColor: '#fff',
+      borderRadius: '20px',
+      padding: '2rem',
+      boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+      animation: 'clockAppear 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      minWidth: '320px',
+      fontFamily: 'Arial, sans-serif'
+    },
+    clockFace: {
+      width: '200px',
+      height: '200px',
+      borderRadius: '50%',
+      border: '3px solid #8b6b5c',
+      position: 'relative',
+      margin: '0 auto 1.5rem',
+      backgroundColor: '#f5ede6'
+    },
+    clockCenter: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: '12px',
+      height: '12px',
+      borderRadius: '50%',
+      backgroundColor: '#8b6b5c',
+      zIndex: 3
+    },
+    clockHand: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transformOrigin: '0 0',
+      backgroundColor: '#8b6b5c',
+      borderRadius: '2px',
+      transition: 'transform 0.3s ease'
+    },
+    timeDisplay: {
+      textAlign: 'center',
+      fontSize: '2rem',
+      fontWeight: 'bold',
+      color: '#4b3b34',
+      marginBottom: '1.5rem',
+      fontFamily: 'Arial, sans-serif'
+    },
+    timeControls: {
+      display: 'flex',
+      gap: '1rem',
+      justifyContent: 'center',
+      marginBottom: '1.5rem'
+    },
+    timeInput: {
+      width: '60px',
+      padding: '0.5rem',
+      textAlign: 'center',
+      border: '2px solid #e0d5cc',
+      borderRadius: '8px',
+      fontSize: '1.2rem',
+      fontWeight: 'bold',
+      fontFamily: 'Arial, sans-serif'
+    },
+    clockButtons: {
+      display: 'flex',
+      gap: '1rem',
+      justifyContent: 'center'
+    },
+    clockBtn: {
+      padding: '0.75rem 1.5rem',
+      borderRadius: '10px',
+      border: 'none',
+      cursor: 'pointer',
+      fontWeight: '600',
+      transition: 'all 0.3s ease',
+      fontFamily: 'Arial, sans-serif'
     }
   };
 
@@ -433,11 +549,46 @@ const SessionsCalendar = () => {
           .scrollable-main::-webkit-scrollbar {
             display: none;
           }
+          @keyframes clockAppear {
+            0% {
+              opacity: 0;
+              transform: scale(0.8) rotate(-10deg);
+            }
+            100% {
+              opacity: 1;
+              transform: scale(1) rotate(0deg);
+            }
+          }
+          @keyframes tickAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+          }
+          @keyframes sessionPulse {
+            0%, 100% { 
+              transform: scale(1);
+              box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4);
+            }
+            50% { 
+              transform: scale(1.15);
+              box-shadow: 0 4px 12px rgba(245, 158, 11, 0.6);
+            }
+          }
+          @keyframes sessionSlideIn {
+            0% {
+              opacity: 0;
+              transform: translateX(20px);
+            }
+            100% {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
         `}
       </style>
       <div style={styles.container}>
         <div style={styles.navbar}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             <button style={styles.backBtn} onClick={() => navigate('/dashboard')}>
               <ArrowLeft size={20} />
             </button>
@@ -486,8 +637,7 @@ const SessionsCalendar = () => {
                     style={{
                       ...styles.dayCell,
                       opacity: isCurrentMonth ? 1 : 0.3,
-                      backgroundColor: isCurrentMonth ? '#fff' : '#f9f9f9',
-                      minHeight: '60px'
+                      backgroundColor: isCurrentMonth ? '#fff' : '#f9f9f9'
                     }}
                     onClick={() => {
                       const today = new Date();
@@ -499,18 +649,63 @@ const SessionsCalendar = () => {
                     }}
                   >
                     <div style={styles.dayNumber}>{day.getDate()}</div>
-                    {daySessions.map(session => (
-                      <div
-                        key={session._id}
-                        style={styles.sessionItem}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openModal(session);
-                        }}
-                      >
-                        {session.title}
-                      </div>
-                    ))}
+                    {daySessions.length > 0 && (() => {
+                      const today = new Date();
+                      today.setHours(23, 59, 59, 999);
+                      const sessionDate = new Date(day);
+                      sessionDate.setHours(23, 59, 59, 999);
+                      const isCompleted = sessionDate < today;
+                      const isToday = sessionDate.toDateString() === new Date().toDateString();
+                      
+                      return (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            bottom: '4px',
+                            right: '4px',
+                            width: '12px',
+                            height: '12px',
+                            borderRadius: '50%',
+                            background: isCompleted 
+                              ? 'linear-gradient(135deg, #22c55e, #16a34a)'
+                              : isToday
+                              ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+                              : daySessions.length > 1
+                              ? 'linear-gradient(135deg, #d4a574, #8b6b5c)'
+                              : 'linear-gradient(135deg, #8b6b5c, #6d5447)',
+                            boxShadow: isCompleted
+                              ? '0 2px 6px rgba(34, 197, 94, 0.4)'
+                              : isToday
+                              ? '0 2px 6px rgba(245, 158, 11, 0.4)'
+                              : '0 2px 4px rgba(139, 107, 92, 0.4)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '8px',
+                            color: '#fff',
+                            fontWeight: 'bold',
+                            transition: 'all 0.3s ease',
+                            animation: isToday ? 'sessionPulse 2s ease-in-out infinite' : 'none'
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (daySessions.length === 1) {
+                              openModal(daySessions[0]);
+                            } else {
+                              openModal(daySessions[0]);
+                            }
+                          }}
+                          title={isCompleted 
+                            ? `Completed: ${daySessions.length === 1 ? daySessions[0].title : `${daySessions.length} sessions`}`
+                            : isToday
+                            ? `Today: ${daySessions.length === 1 ? daySessions[0].title : `${daySessions.length} sessions`}`
+                            : `Upcoming: ${daySessions.length === 1 ? daySessions[0].title : `${daySessions.length} sessions`}`}
+                        >
+                          {isCompleted ? '✓' : daySessions.length > 1 ? daySessions.length : ''}
+                        </div>
+                      );
+                    })()}
                   </div>
                 );
               })}
@@ -519,21 +714,110 @@ const SessionsCalendar = () => {
 
           <div style={styles.rightPanel}>
             <div style={styles.sessionsList}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h3 style={{ margin: 0 }}>Sessions</h3>
-                <select 
-                  value={sessionFilter} 
-                  onChange={(e) => setSessionFilter(e.target.value)}
-                  style={{
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    border: '1px solid #e0d5cc',
-                    fontSize: '0.9rem'
-                  }}
-                >
-                  <option value="upcoming">Upcoming Sessions</option>
-                  <option value="previous">Previous Sessions</option>
-                </select>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h3 style={{ 
+                  margin: 0, 
+                  fontSize: '1.3rem', 
+                  fontWeight: 'bold', 
+                  color: '#4b3b34',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}>
+                  <Calendar size={20} style={{ color: '#8b6b5c' }} />
+                  Sessions
+                </h3>
+                <div style={{ position: 'relative' }}>
+                  <button
+                    onClick={() => setShowFilterOptions(!showFilterOptions)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '0.5rem',
+                      padding: '0.75rem 1rem',
+                      borderRadius: '10px',
+                      border: '2px solid #e0d5cc',
+                      backgroundColor: '#fff',
+                      color: '#4b3b34',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      minWidth: '160px',
+                      transition: 'all 0.3s ease',
+                      boxShadow: showFilterOptions ? '0 4px 12px rgba(139, 107, 92, 0.2)' : '0 2px 4px rgba(0,0,0,0.05)'
+                    }}
+                  >
+                    <span>{sessionFilter === 'upcoming' ? 'Upcoming Sessions' : 'Previous Sessions'}</span>
+                    <div style={{
+                      transform: showFilterOptions ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.3s ease',
+                      fontSize: '0.8rem'
+                    }}>
+                      ▼
+                    </div>
+                  </button>
+                  
+                  {showFilterOptions && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: '0',
+                      right: '0',
+                      backgroundColor: '#fff',
+                      borderRadius: '10px',
+                      border: '2px solid #e0d5cc',
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                      zIndex: 1000,
+                      marginTop: '0.5rem',
+                      overflow: 'hidden',
+                      animation: 'filterDropdown 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                    }}>
+                      {[
+                        { value: 'upcoming', label: 'Upcoming Sessions', icon: '📅' },
+                        { value: 'previous', label: 'Previous Sessions', icon: '📋' }
+                      ].map((option, index) => (
+                        <button
+                          key={option.value}
+                          onClick={() => {
+                            setSessionFilter(option.value);
+                            setShowFilterOptions(false);
+                          }}
+                          style={{
+                            width: '100%',
+                            padding: '0.875rem 1rem',
+                            border: 'none',
+                            backgroundColor: sessionFilter === option.value ? '#8b6b5c' : 'transparent',
+                            color: sessionFilter === option.value ? '#fff' : '#4b3b34',
+                            fontSize: '0.9rem',
+                            fontWeight: '500',
+                            textAlign: 'left',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            borderBottom: index < 1 ? '1px solid #f0f0f0' : 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            animation: `filterSlideIn 0.2s ease ${index * 0.05}s both`
+                          }}
+                          onMouseEnter={(e) => {
+                            if (sessionFilter !== option.value) {
+                              e.target.style.backgroundColor = '#f5ede6';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (sessionFilter !== option.value) {
+                              e.target.style.backgroundColor = 'transparent';
+                            }
+                          }}
+                        >
+                          <span>{option.icon}</span>
+                          <span>{option.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
               {(() => {
                 const today = new Date();
@@ -556,35 +840,150 @@ const SessionsCalendar = () => {
                   }
                 });
                 
-                return filteredSessions.length > 0 ? filteredSessions.map(session => (
-                  <div key={session._id} style={styles.sessionCard}>
-                    <div>
-                      <div style={{ fontWeight: 'bold' }}>{session.title}</div>
-                      <div style={{ color: '#6a5b53', fontSize: '0.9rem' }}>
+                return filteredSessions.length > 0 ? filteredSessions.map((session, index) => (
+                  <div 
+                    key={session._id} 
+                    style={{
+                      ...styles.sessionCard,
+                      animation: `sessionSlideIn 0.4s ease ${index * 0.1}s both`
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 8px 25px rgba(139, 107, 92, 0.2)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(139, 107, 92, 0.08)';
+                    }}
+                  >
+                    <div style={{ flex: 1 }}>
+                      <div style={{ 
+                        fontWeight: 'bold', 
+                        fontSize: '1.1rem',
+                        color: '#4b3b34',
+                        marginBottom: '0.5rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem'
+                      }}>
+                        <div style={{
+                          width: '10px',
+                          height: '10px',
+                          borderRadius: '50%',
+                          background: (() => {
+                            const today = new Date();
+                            today.setHours(23, 59, 59, 999);
+                            const sessionDate = new Date(session.date);
+                            sessionDate.setHours(23, 59, 59, 999);
+                            const isCompleted = sessionDate < today;
+                            const isToday = sessionDate.toDateString() === new Date().toDateString();
+                            
+                            if (isCompleted) {
+                              return 'linear-gradient(135deg, #22c55e, #16a34a)';
+                            } else if (isToday) {
+                              return 'linear-gradient(135deg, #f59e0b, #d97706)';
+                            } else if (session.type === 'teaching') {
+                              return 'linear-gradient(135deg, #8b6b5c, #6d5447)';
+                            } else if (session.type === 'learning') {
+                              return 'linear-gradient(135deg, #d4a574, #8b6b5c)';
+                            } else {
+                              return 'linear-gradient(135deg, #6d5447, #5a4239)';
+                            }
+                          })(),
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '6px',
+                          color: '#fff',
+                          fontWeight: 'bold'
+                        }}>
+                          {(() => {
+                            const today = new Date();
+                            today.setHours(23, 59, 59, 999);
+                            const sessionDate = new Date(session.date);
+                            sessionDate.setHours(23, 59, 59, 999);
+                            return sessionDate < today ? '✓' : '';
+                          })()
+                        }</div>
+                        {session.title}
+                      </div>
+                      <div style={{ 
+                        color: '#6a5b53', 
+                        fontSize: '0.9rem',
+                        marginBottom: '0.25rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem'
+                      }}>
+                        <Clock size={14} />
                         {new Date(session.date).toLocaleDateString()} • {session.startTime} - {session.endTime}
                       </div>
-                      <div style={{ color: '#8b6b5c', fontSize: '0.8rem' }}>
-                        {session.skill} • {session.type}
+                      <div style={{ 
+                        color: '#8b6b5c', 
+                        fontSize: '0.85rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem'
+                      }}>
+                        <BookOpen size={14} />
+                        {session.skill} • {session.type.charAt(0).toUpperCase() + session.type.slice(1)}
                       </div>
                     </div>
                     <div style={styles.sessionActions}>
                       <button
-                        style={{ ...styles.actionBtn, color: '#8b6b5c' }}
+                        style={{ 
+                          ...styles.actionBtn, 
+                          color: '#8b6b5c',
+                          backgroundColor: 'rgba(139, 107, 92, 0.1)',
+                          borderRadius: '8px',
+                          transition: 'all 0.3s ease'
+                        }}
                         onClick={() => openModal(session)}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#8b6b5c';
+                          e.currentTarget.style.color = '#fff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'rgba(139, 107, 92, 0.1)';
+                          e.currentTarget.style.color = '#8b6b5c';
+                        }}
                       >
                         <Edit size={16} />
                       </button>
                       <button
-                        style={{ ...styles.actionBtn, color: '#ef4444' }}
+                        style={{ 
+                          ...styles.actionBtn, 
+                          color: '#ef4444',
+                          backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                          borderRadius: '8px',
+                          transition: 'all 0.3s ease'
+                        }}
                         onClick={() => handleDelete(session._id)}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#ef4444';
+                          e.currentTarget.style.color = '#fff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                          e.currentTarget.style.color = '#ef4444';
+                        }}
                       >
                         <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
                 )) : (
-                  <div style={{ textAlign: 'center', color: '#6a5b53', padding: '2rem' }}>
-                    No {sessionFilter} sessions found
+                  <div style={{ 
+                    textAlign: 'center', 
+                    color: '#6a5b53', 
+                    padding: '3rem 2rem',
+                    background: 'linear-gradient(135deg, rgba(139, 107, 92, 0.05) 0%, transparent 100%)',
+                    borderRadius: '12px',
+                    border: '1px dashed rgba(139, 107, 92, 0.2)'
+                  }}>
+                    <Calendar size={32} style={{ color: '#8b6b5c', marginBottom: '1rem' }} />
+                    <div style={{ fontWeight: '600', marginBottom: '0.5rem' }}>No sessions found</div>
+                    <div>No {sessionFilter.toLowerCase()} sessions available</div>
                   </div>
                 );
               })()}
@@ -622,22 +1021,52 @@ const SessionsCalendar = () => {
                 />
                 
                 <div style={{ display: 'flex', gap: '1rem' }}>
-                  <input
-                    style={styles.input}
-                    type="time"
-                    placeholder="Start Time"
-                    value={formData.startTime}
-                    onChange={(e) => setFormData({...formData, startTime: e.target.value})}
-                    required
-                  />
-                  <input
-                    style={styles.input}
-                    type="time"
-                    placeholder="End Time"
-                    value={formData.endTime}
-                    onChange={(e) => setFormData({...formData, endTime: e.target.value})}
-                    required
-                  />
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', color: '#4b3b34' }}>Start Time</label>
+                    <div
+                      style={{
+                        ...styles.input,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                        backgroundColor: '#f8f5f2'
+                      }}
+                      onClick={() => {
+                        const [hour, minute] = (formData.startTime || '09:00').split(':');
+                        const hour12 = parseInt(hour) === 0 ? 12 : parseInt(hour) > 12 ? parseInt(hour) - 12 : parseInt(hour);
+                        const period = parseInt(hour) >= 12 ? 'PM' : 'AM';
+                        setTempTime({ hour: hour12.toString().padStart(2, '0'), minute, period });
+                        setShowTimePicker('start');
+                      }}
+                    >
+                      <span style={{ fontFamily: 'Arial, sans-serif' }}>{formData.startTime || 'Select time'}</span>
+                      <Clock size={20} style={{ color: '#8b6b5c' }} />
+                    </div>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', color: '#4b3b34' }}>End Time</label>
+                    <div
+                      style={{
+                        ...styles.input,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                        backgroundColor: '#f8f5f2'
+                      }}
+                      onClick={() => {
+                        const [hour, minute] = (formData.endTime || '10:00').split(':');
+                        const hour12 = parseInt(hour) === 0 ? 12 : parseInt(hour) > 12 ? parseInt(hour) - 12 : parseInt(hour);
+                        const period = parseInt(hour) >= 12 ? 'PM' : 'AM';
+                        setTempTime({ hour: hour12.toString().padStart(2, '0'), minute, period });
+                        setShowTimePicker('end');
+                      }}
+                    >
+                      <span style={{ fontFamily: 'Arial, sans-serif' }}>{formData.endTime || 'Select time'}</span>
+                      <Clock size={20} style={{ color: '#8b6b5c' }} />
+                    </div>
+                  </div>
                 </div>
                 
                 <input
@@ -703,6 +1132,186 @@ const SessionsCalendar = () => {
                   onClick={confirmDelete}
                 >
                   Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showTimePicker && (
+          <div style={styles.timePickerOverlay} onClick={() => setShowTimePicker(null)}>
+            <div style={styles.clockContainer} onClick={(e) => e.stopPropagation()}>
+              <div style={styles.timeDisplay}>
+                {tempTime.hour}:{tempTime.minute} {tempTime.period}
+              </div>
+              
+              <div style={styles.clockFace}>
+                <div style={styles.clockCenter}></div>
+                
+                {/* Hour markers */}
+                {Array.from({ length: 12 }, (_, i) => {
+                  const hour = i === 0 ? 12 : i;
+                  const angle = (i * 30) - 90;
+                  const x = 85 * Math.cos(angle * Math.PI / 180);
+                  const y = 85 * Math.sin(angle * Math.PI / 180);
+                  return (
+                    <div
+                      key={i}
+                      style={{
+                        position: 'absolute',
+                        top: `calc(50% + ${y}px)`,
+                        left: `calc(50% + ${x}px)`,
+                        transform: 'translate(-50%, -50%)',
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        backgroundColor: parseInt(tempTime.hour) % 12 === hour % 12 ? '#8b6b5c' : '#e0d5cc',
+                        color: parseInt(tempTime.hour) % 12 === hour % 12 ? '#fff' : '#4b3b34',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.8rem',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onClick={() => setTempTime(prev => ({ ...prev, hour: hour.toString().padStart(2, '0') }))}
+                    >
+                      {hour}
+                    </div>
+                  );
+                })}
+                
+                {/* Hour hand */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    width: '4px',
+                    height: '50px',
+                    backgroundColor: '#8b6b5c',
+                    borderRadius: '2px',
+                    transformOrigin: '50% 100%',
+                    transform: `translate(-50%, -100%) rotate(${((parseInt(tempTime.hour) % 12) * 30) + (parseInt(tempTime.minute) * 0.5)}deg)`,
+                    transition: 'transform 0.3s ease',
+                    zIndex: 2
+                  }}
+                ></div>
+                
+                {/* Minute hand */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    width: '2px',
+                    height: '70px',
+                    backgroundColor: '#6d5447',
+                    borderRadius: '1px',
+                    transformOrigin: '50% 100%',
+                    transform: `translate(-50%, -100%) rotate(${parseInt(tempTime.minute) * 6}deg)`,
+                    transition: 'transform 0.3s ease',
+                    zIndex: 2
+                  }}
+                ></div>
+              </div>
+              
+              <div style={styles.timeControls}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', textAlign: 'center', fontWeight: '600' }}>Hour</label>
+                  <input
+                    style={styles.timeInput}
+                    type="number"
+                    min="1"
+                    max="12"
+                    value={tempTime.hour}
+                    onChange={(e) => setTempTime(prev => ({ ...prev, hour: e.target.value.padStart(2, '0') }))}
+                  />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', fontSize: '1.5rem', fontWeight: 'bold' }}>:</div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', textAlign: 'center', fontWeight: '600' }}>Minute</label>
+                  <input
+                    style={styles.timeInput}
+                    type="number"
+                    min="0"
+                    max="59"
+                    step="5"
+                    value={tempTime.minute}
+                    onChange={(e) => setTempTime(prev => ({ ...prev, minute: e.target.value.padStart(2, '0') }))}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', textAlign: 'center', fontWeight: '600' }}>Period</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <button
+                      type="button"
+                      style={{
+                        ...styles.timeInput,
+                        width: '50px',
+                        height: '30px',
+                        padding: '0.25rem',
+                        fontSize: '0.9rem',
+                        backgroundColor: tempTime.period === 'AM' ? '#8b6b5c' : '#f5ede6',
+                        color: tempTime.period === 'AM' ? '#fff' : '#4b3b34',
+                        border: tempTime.period === 'AM' ? '2px solid #8b6b5c' : '2px solid #e0d5cc'
+                      }}
+                      onClick={() => setTempTime(prev => ({ ...prev, period: 'AM' }))}
+                    >
+                      AM
+                    </button>
+                    <button
+                      type="button"
+                      style={{
+                        ...styles.timeInput,
+                        width: '50px',
+                        height: '30px',
+                        padding: '0.25rem',
+                        fontSize: '0.9rem',
+                        backgroundColor: tempTime.period === 'PM' ? '#8b6b5c' : '#f5ede6',
+                        color: tempTime.period === 'PM' ? '#fff' : '#4b3b34',
+                        border: tempTime.period === 'PM' ? '2px solid #8b6b5c' : '2px solid #e0d5cc'
+                      }}
+                      onClick={() => setTempTime(prev => ({ ...prev, period: 'PM' }))}
+                    >
+                      PM
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div style={styles.clockButtons}>
+                <button
+                  style={{
+                    ...styles.clockBtn,
+                    backgroundColor: '#6b7280',
+                    color: '#fff'
+                  }}
+                  onClick={() => setShowTimePicker(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  style={{
+                    ...styles.clockBtn,
+                    backgroundColor: '#8b6b5c',
+                    color: '#fff'
+                  }}
+                  onClick={() => {
+                    let hour24 = parseInt(tempTime.hour);
+                    if (tempTime.period === 'PM' && hour24 !== 12) hour24 += 12;
+                    if (tempTime.period === 'AM' && hour24 === 12) hour24 = 0;
+                    const timeString = `${hour24.toString().padStart(2, '0')}:${tempTime.minute}`;
+                    if (showTimePicker === 'start') {
+                      setFormData(prev => ({ ...prev, startTime: timeString }));
+                    } else {
+                      setFormData(prev => ({ ...prev, endTime: timeString }));
+                    }
+                    setShowTimePicker(null);
+                  }}
+                >
+                  Set Time
                 </button>
               </div>
             </div>

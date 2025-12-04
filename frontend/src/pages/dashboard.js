@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
-import { Search, Users, Book, Calendar, Globe, TrendingUp, MessageCircle, Bell, Check, X, Send, Trash2, Home, User } from "lucide-react";
+import { Search, Users, Book, Calendar, Globe, TrendingUp, MessageCircle, Bell, Check, X, Send, Trash2, Home, User, Filter } from "lucide-react";
 
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -79,20 +79,27 @@ const styles = {
     position: "absolute",
     top: "80px",
     right: "20px",
-    backgroundColor: "#fff",
-    borderRadius: "12px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-    width: "400px",
-    maxHeight: "500px",
+    background: "linear-gradient(135deg, #fff 0%, #f8f5f2 100%)",
+    borderRadius: "16px",
+    boxShadow: "0 12px 40px rgba(139, 107, 92, 0.25), 0 4px 12px rgba(0,0,0,0.1)",
+    width: "380px",
+    height: "400px",
     overflowY: "auto",
     zIndex: 1000,
+    border: "1px solid rgba(139, 107, 92, 0.1)",
+    backdropFilter: "blur(10px)",
   },
   notificationHeader: {
-    padding: "1rem 1.5rem",
-    borderBottom: "1px solid #e0d5cc",
+    padding: "1rem 1.5rem 0.75rem",
+    background: "linear-gradient(135deg, #4b3b34 0%, #5a4239 100%)",
+    borderRadius: "16px 16px 0 0",
     fontWeight: "bold",
     fontSize: "1.1rem",
-    color: "#4b3b34",
+    color: "#f5ede6",
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
   },
   notificationSectionTitle: {
     padding: '0.5rem 1.5rem 0.25rem',
@@ -104,7 +111,13 @@ const styles = {
   },
   notificationItem: {
     padding: "1rem 1.5rem",
-    borderBottom: "1px solid #f0f0f0",
+    borderBottom: "1px solid rgba(139, 107, 92, 0.1)",
+    background: "linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,245,242,0.6) 100%)",
+    margin: "0.25rem 0.75rem",
+    borderRadius: "10px",
+    transition: "all 0.3s ease",
+    position: "relative",
+    overflow: "hidden",
   },
   notificationName: {
     fontWeight: "600",
@@ -121,28 +134,34 @@ const styles = {
     gap: "0.5rem",
   },
   acceptBtn: {
-    backgroundColor: "#22c55e",
+    background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)",
     color: "white",
     border: "none",
     padding: "0.5rem 1rem",
-    borderRadius: "6px",
+    borderRadius: "8px",
     cursor: "pointer",
-    fontSize: "0.9rem",
+    fontSize: "0.85rem",
+    fontWeight: "600",
     display: "flex",
     alignItems: "center",
-    gap: "0.25rem",
+    gap: "0.4rem",
+    boxShadow: "0 3px 8px rgba(34, 197, 94, 0.3)",
+    transition: "all 0.3s ease",
   },
   rejectBtn: {
-    backgroundColor: "#ef4444",
+    background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
     color: "white",
     border: "none",
     padding: "0.5rem 1rem",
-    borderRadius: "6px",
+    borderRadius: "8px",
     cursor: "pointer",
-    fontSize: "0.9rem",
+    fontSize: "0.85rem",
+    fontWeight: "600",
     display: "flex",
     alignItems: "center",
-    gap: "0.25rem",
+    gap: "0.4rem",
+    boxShadow: "0 3px 8px rgba(239, 68, 68, 0.3)",
+    transition: "all 0.3s ease",
   },
   chatBtn: {
     backgroundColor: "transparent",
@@ -281,6 +300,7 @@ const styles = {
     fontWeight: "600",
     marginBottom: "0.75rem",
     color: "#4b3b34",
+    textAlign: "center"
   },
   actionDesc: {
     fontSize: "1.1rem",
@@ -736,6 +756,8 @@ export default function Dashboard() {
   const [myMatches, setMyMatches] = useState([]);
   const [fetchError, setFetchError] = useState(null);
   const notificationRef = useRef(null);
+  const filterRef = useRef(null);
+  const [showFilterOptions, setShowFilterOptions] = useState(false);
 
   const [selectedUserForRequest, setSelectedUserForRequest] = useState(null);
   const [selectedSkillOffered, setSelectedSkillOffered] = useState('');
@@ -1132,6 +1154,28 @@ export default function Dashboard() {
       0% { transform: translateX(-100%); }
       100% { transform: translateX(100%); }
     }
+    
+    @keyframes filterSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes filterDropdown {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
   `;
 
   const StatCard = ({ icon: Icon, title, value }) => (
@@ -1470,41 +1514,115 @@ export default function Dashboard() {
       {showNotifications && (
         <div ref={notificationRef} style={styles.notificationDropdown}>
           <div style={styles.notificationHeader}>
+            <Bell size={20} style={{ color: '#e6d9caff' }} />
             Connection Requests ({incomingRequests.length})
           </div>
 
           {incomingRequests.length > 0 ? (
             incomingRequests.map((request) => (
               <div key={request._id} style={styles.notificationItem}>
-                <div style={styles.notificationName}>{request.senderName}</div>
-                <div style={styles.notificationSkills}>
-                  Wants to learn: <strong>{request.skillRequested}</strong>
-                  {request.skillOffered && request.skillOffered !== 'General skills' && (
-                    <><br/>They can teach: <strong>{request.skillOffered}</strong></>
-                  )}
-                  {(request.skillOffered === 'General skills' || !request.skillOffered) && (
-                    <><br/><strong>For one credit</strong></>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  marginBottom: '0.5rem'
+                }}>
+                  <div style={{
+                    width: '35px',
+                    height: '35px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #8b6b5c, #6d5447)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                    boxShadow: '0 3px 8px rgba(139, 107, 92, 0.3)'
+                  }}>
+                    {request.senderName?.charAt(0) || '?'}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{
+                      ...styles.notificationName,
+                      fontSize: '1rem',
+                      marginBottom: '0.1rem'
+                    }}>
+                      {request.senderName}
+                    </div>
+                    <div style={{
+                      fontSize: '0.8rem',
+                      color: '#8b6b5c',
+                      fontWeight: '500'
+                    }}>
+                      New Connection Request
+                    </div>
+                  </div>
+                </div>
+                <div style={{
+                  ...styles.notificationSkills,
+                  background: 'rgba(139, 107, 92, 0.08)',
+                  padding: '0.75rem',
+                  borderRadius: '8px',
+                  marginBottom: '0.75rem',
+                  border: '1px solid rgba(139, 107, 92, 0.1)',
+                  fontSize: '0.85rem'
+                }}>
+                  <div style={{ marginBottom: '0.25rem' }}>
+                    Learns: <strong style={{ color: '#4b3b34' }}>{request.skillRequested}</strong>
+                  </div>
+                  {request.skillOffered && request.skillOffered !== 'General skills' ? (
+                    <div>Offers: <strong style={{ color: '#4b3b34' }}>{request.skillOffered}</strong></div>
+                  ) : (
+                    <div><strong style={{ color: '#8b6b5c' }}>For one credit</strong></div>
                   )}
                 </div>
                 <div style={styles.notificationActions}>
                   <button
                     style={styles.acceptBtn}
                     onClick={() => acceptRequest(request._id)}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(34, 197, 94, 0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(34, 197, 94, 0.3)';
+                    }}
                   >
-                    <Check size={16} /> Accept
+                    <Check size={18} /> Accept
                   </button>
                   <button
                     style={styles.rejectBtn}
                     onClick={() => rejectRequest(request._id)}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(239, 68, 68, 0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)';
+                    }}
                   >
-                    <X size={16} /> Reject
+                    <X size={18} /> Reject
                   </button>
                 </div>
               </div>
             ))
           ) : (
-            <div style={{ padding: "2rem 1.5rem", fontSize: '1rem', color: "#6a5b53", textAlign: 'center' }}>
-              No pending connection requests
+            <div style={{ 
+              padding: "2rem 1.5rem", 
+              fontSize: '0.9rem', 
+              color: "#6a5b53", 
+              textAlign: 'center',
+              background: 'linear-gradient(135deg, rgba(139, 107, 92, 0.05) 0%, transparent 100%)',
+              margin: '0.75rem',
+              borderRadius: '10px',
+              border: '1px dashed rgba(139, 107, 92, 0.2)'
+            }}>
+              <Bell size={24} style={{ color: '#8b6b5c', marginBottom: '0.75rem' }} />
+              <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>All caught up!</div>
+              <div>No pending requests</div>
             </div>
           )}
         </div>
@@ -1633,26 +1751,101 @@ export default function Dashboard() {
 
         {/* Search Section */}
         <section style={styles.searchContainer}>
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', maxWidth: '900px', width: '100%', justifyContent: 'center' }}>
-            <select
-              value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
-              style={{
-                padding: '1rem',
-                borderRadius: '12px',
-                border: '2px solid #e0d5cc',
-                backgroundColor: '#fff',
-                color: '#4b3b34',
-                fontSize: '1rem',
-                minWidth: '150px'
-              }}
-            >
-              <option value="all">All Fields</option>
-              <option value="name">Name</option>
-              <option value="email">Email</option>
-              <option value="skills">Skills They Have</option>
-              <option value="skillsWanted">Skills They Want</option>
-            </select>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', maxWidth: '900px', width: '100%', justifyContent: 'center', position: 'relative' }}>
+            <div ref={filterRef} style={{ position: 'relative' }}>
+              <button
+                onClick={() => setShowFilterOptions(!showFilterOptions)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '0.5rem',
+                  padding: '1rem 1.5rem',
+                  borderRadius: '12px',
+                  border: '2px solid #e0d5cc',
+                  backgroundColor: '#fff',
+                  color: '#4b3b34',
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  minWidth: '180px',
+                  transition: 'all 0.3s ease',
+                  boxShadow: showFilterOptions ? '0 4px 12px rgba(139, 107, 92, 0.2)' : 'none'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Filter size={18} />
+                  <span>{searchFilter === 'all' ? 'All Fields' : 
+                         searchFilter === 'name' ? 'Name' :
+                         searchFilter === 'email' ? 'Email' :
+                         searchFilter === 'skills' ? 'Skills They Have' :
+                         searchFilter === 'skillsWanted' ? 'Skills They Want' : 'Filter'}</span>
+                </div>
+                <div style={{
+                  transform: showFilterOptions ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.3s ease'
+                }}>
+                  ▼
+                </div>
+              </button>
+              
+              {showFilterOptions && (
+                <div style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: '0',
+                  right: '0',
+                  backgroundColor: '#fff',
+                  borderRadius: '12px',
+                  border: '2px solid #e0d5cc',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                  zIndex: 1000,
+                  marginTop: '0.5rem',
+                  overflow: 'hidden',
+                  animation: 'filterDropdown 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                }}>
+                  {[
+                    { value: 'all', label: 'All Fields' },
+                    { value: 'name', label: 'Name' },
+                    { value: 'email', label: 'Email' },
+                    { value: 'skills', label: 'Skills They Have' },
+                    { value: 'skillsWanted', label: 'Skills They Want' }
+                  ].map((option, index) => (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        setSearchFilter(option.value);
+                        setShowFilterOptions(false);
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '0.875rem 1.5rem',
+                        border: 'none',
+                        backgroundColor: searchFilter === option.value ? '#8b6b5c' : 'transparent',
+                        color: searchFilter === option.value ? '#fff' : '#4b3b34',
+                        fontSize: '1rem',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        borderBottom: index < 4 ? '1px solid #f0f0f0' : 'none',
+                        animation: `filterSlideIn 0.2s ease ${index * 0.05}s both`
+                      }}
+                      onMouseEnter={(e) => {
+                        if (searchFilter !== option.value) {
+                          e.target.style.backgroundColor = '#f5ede6';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (searchFilter !== option.value) {
+                          e.target.style.backgroundColor = 'transparent';
+                        }
+                      }}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <div style={{
               position: 'relative',
               width: searchQuery ? '700px' : '300px',
@@ -1907,7 +2100,7 @@ export default function Dashboard() {
               }}
             />
             <ActionCard
-              icon={<Users size={28} />}
+              icon={<Calendar size={28} />}
               title="My Sessions"
               desc="Manage your teaching and learning sessions with a calendar view"
               buttonText="My Schedule"

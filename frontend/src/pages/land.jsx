@@ -23,7 +23,7 @@ export default function Landing() {
   // Inline styles remain but updated to the new theme
   const styles = {
     body: {
-      fontFamily: "'Lora', serif",
+      fontFamily: "Arial, sans-serif",
       // Use transparent so our component-level gradient can show through
       backgroundColor: 'transparent',
       color: '#3b2f2f',
@@ -147,7 +147,7 @@ export default function Landing() {
       marginBottom: '1rem',
       lineHeight: '1.05',
       color: '#2e1f1a',
-      fontFamily: "'Lora', serif",
+      fontFamily: "Arial, sans-serif",
       textShadow: '0 2px 0 rgba(255,255,255,0.02)'
     },
     heroText: {
@@ -299,8 +299,8 @@ export default function Landing() {
       padding: '1.5rem',
       borderRadius: '12px',
       background: 'linear-gradient(135deg, #664f46ff 0%, #694e4eff 25%, #4d271dff 50%, #523232ff 75%, #6a3e2cff 100%)',
-      boxShadow: '0 15px 35px rgba(0,0,0,0.3)',
-      border: '1px solid rgba(255,255,255,0.1)',
+      boxShadow: '0 15px 35px rgba(4, 4, 4, 0.3)',
+      border: '1px solid rgba(3, 1, 1, 0.1)',
       backdropFilter: 'blur(10px)',
       transform: 'translateX(100px)',
       opacity: 0,
@@ -323,7 +323,7 @@ export default function Landing() {
     // CTA / Footer
     cta: {
       padding: '6rem 1.5rem',
-      background: 'linear-gradient(180deg, rgba(157, 123, 110, 0.15), rgba(152, 122, 113, 0.2))',
+      background: 'linear-gradient(180deg, rgba(109, 78, 64, 0.15), rgba(148, 114, 104, 0.2))',
       textAlign: 'center',
       borderTop: '1px solid rgba(59, 47, 44, 0.1)',
       position: 'relative'
@@ -408,10 +408,8 @@ export default function Landing() {
 
         {/* Enhanced CSS for animations & responsive design */}
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap');
-          
           * {
-            font-family: 'Lora', serif !important;
+            font-family: 'Arial', sans-serif !important;
           }
 
           /* Hide scrollbar */

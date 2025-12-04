@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -20,12 +20,25 @@ export default function AuthPages() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   React.useEffect(() => {
     document.body.style.margin = '0';
     document.body.style.padding = '0';
     document.body.style.backgroundColor = '#402E2A';
+    
+    // Trigger entrance animation
+    setTimeout(() => setIsLoaded(true), 100);
   }, []);
+
+  const handlePageSwitch = (newPage) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentPage(newPage);
+      setIsTransitioning(false);
+    }, 300);
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -81,7 +94,7 @@ export default function AuthPages() {
   const styles = {
     body: {
       overflowX: 'hidden',
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      fontFamily: 'Arial, sans-serif',
       backgroundColor: '#402E2A',
       color: '#EDE3DB',
       lineHeight: '1.6',
@@ -153,7 +166,10 @@ export default function AuthPages() {
       width: '100%',
       maxWidth: '900px',
       display: 'flex',
-      minHeight: '600px'
+      minHeight: '600px',
+      transform: isLoaded ? 'translateY(0) scale(1)' : 'translateY(50px) scale(0.95)',
+      opacity: isLoaded ? 1 : 0,
+      transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
     },
 
     // Left Panel (Welcome/Info)
@@ -165,7 +181,10 @@ export default function AuthPages() {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      textAlign: 'center'
+      textAlign: 'center',
+      transform: isLoaded ? 'translateX(0)' : 'translateX(-50px)',
+      opacity: isLoaded ? 1 : 0,
+      transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s'
     },
     welcomeTitle: {
       fontSize: '2.5rem',
@@ -189,7 +208,9 @@ export default function AuthPages() {
       fontWeight: '600',
       fontSize: '1rem',
       cursor: 'pointer',
-      transition: 'all 0.3s'
+      transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      transform: 'translateY(0)',
+      boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
     },
 
     // Right Panel (Form)
@@ -199,7 +220,10 @@ export default function AuthPages() {
       flex: '1',
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      transform: isLoaded ? 'translateX(0)' : 'translateX(50px)',
+      opacity: isLoaded ? 1 : 0,
+      transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s'
     },
     formTitle: {
       fontSize: '2rem',
@@ -220,6 +244,9 @@ export default function AuthPages() {
       display: 'flex',
       flexDirection: 'column',
       gap: '1.5rem',
+      transform: isTransitioning ? 'translateX(20px)' : 'translateX(0)',
+      opacity: isTransitioning ? 0.7 : 1,
+      transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
     },
     formRow: {
       display: 'flex',
@@ -243,9 +270,10 @@ export default function AuthPages() {
       fontSize: '1rem',
       backgroundColor: '#EDE3DB',
       color: '#402E2A',
-      transition: 'border-color 0.3s, box-shadow 0.3s',
+      transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
       outline: 'none',
       boxSizing: 'border-box',
+      transform: 'translateY(0)'
     },
     textarea: {
       padding: '0.875rem',
@@ -254,12 +282,13 @@ export default function AuthPages() {
       fontSize: '1rem',
       backgroundColor: '#EDE3DB',
       color: '#402E2A',
-      transition: 'border-color 0.3s, box-shadow 0.3s',
+      transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
       outline: 'none',
       resize: 'vertical',
       minHeight: '100px',
       fontFamily: 'inherit',
       boxSizing: 'border-box',
+      transform: 'translateY(0)'
     },
     checkboxContainer: {
       display: 'flex',
@@ -285,8 +314,10 @@ export default function AuthPages() {
       fontWeight: '600',
       fontSize: '1.125rem',
       cursor: 'pointer',
-      transition: 'all 0.3s',
-      marginTop: '1rem'
+      transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      marginTop: '1rem',
+      transform: 'translateY(0)',
+      boxShadow: '0 6px 20px rgba(64,46,42,0.3)'
     },
     forgotPassword: {
       textAlign: 'center',
@@ -337,6 +368,86 @@ export default function AuthPages() {
 
   return (
     <div style={styles.body}>
+      {/* Enhanced CSS for animations */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap');
+        
+        * {
+          font-family: 'Lora', serif !important;
+        }
+
+        /* Smooth animations for form elements */
+        .form-input:focus {
+          border-color: #402E2A !important;
+          box-shadow: 0 0 0 3px rgba(64,46,42,0.1) !important;
+          transform: translateY(-2px) !important;
+        }
+
+        .form-input:hover {
+          border-color: #59433e !important;
+          transform: translateY(-1px) !important;
+        }
+
+        .submit-btn:hover {
+          transform: translateY(-3px) !important;
+          box-shadow: 0 8px 25px rgba(64,46,42,0.4) !important;
+          background-color: #59433e !important;
+        }
+
+        .submit-btn:active {
+          transform: translateY(-1px) !important;
+        }
+
+        .switch-btn:hover {
+          transform: translateY(-2px) !important;
+          box-shadow: 0 6px 20px rgba(0,0,0,0.3) !important;
+          background-color: #59433e !important;
+          border-color: #EDE3DB !important;
+        }
+
+        .nav-link:hover {
+          background-color: rgba(237,227,219,0.1) !important;
+          transform: translateY(-2px) !important;
+        }
+
+        .form-group {
+          animation: slideInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+          opacity: 0;
+          transform: translateY(20px);
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; }
+        .form-group:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes slideInUp {
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .fade-in {
+          animation: fadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse {
+          animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+      `}</style>
       {/* Navigation */}
       <nav style={styles.nav}>
         <div style={styles.navContainer}>
@@ -346,7 +457,7 @@ export default function AuthPages() {
           
           <ul style={styles.navLinks}>
             <li>
-            <Link to="/" style={styles.navLink}>Home</Link></li>
+            <Link to="/" className="nav-link" style={styles.navLink}>Home</Link></li>
           </ul>
         </div>
       </nav>
@@ -364,8 +475,9 @@ export default function AuthPages() {
                   learn new ones, and build meaningful connections.
                 </p>
                 <button 
+                  className="switch-btn"
                   style={styles.switchButton}
-                  onClick={() => setCurrentPage('login')}
+                  onClick={() => handlePageSwitch('login')}
                 >
                   Already have an account?
                 </button>
@@ -378,8 +490,9 @@ export default function AuthPages() {
                   your profile and start bartering skills.
                 </p>
                 <button 
+                  className="switch-btn"
                   style={styles.switchButton}
-                  onClick={() => setCurrentPage('signup')}
+                  onClick={() => handlePageSwitch('signup')}
                 >
                   Need an account?
                 </button>
@@ -401,10 +514,11 @@ export default function AuthPages() {
 
             {/* Login Form */}
             {currentPage === 'login' && (
-              <div style={styles.formContainer}>
-                <div style={styles.formGroup}>
+              <div style={styles.formContainer} className="fade-in">
+                <div style={styles.formGroup} className="form-group">
                   <label style={styles.label} htmlFor="loginEmail">Email Address</label>
                   <input
+                    className="form-input"
                     style={styles.input}
                     type="email"
                     id="loginEmail"
@@ -416,10 +530,11 @@ export default function AuthPages() {
                 </div>
 
 
-                <div style={styles.formGroup}>
+                <div style={styles.formGroup} className="form-group">
                   <label style={styles.label} htmlFor="loginPassword">Password</label>
                   <div style={styles.passwordContainer}>
                     <input
+                      className="form-input"
                       style={{...styles.input, paddingRight: '3rem'}}
                       type={showPassword ? "text" : "password"}
                       id="loginPassword"
@@ -440,6 +555,7 @@ export default function AuthPages() {
 
                 <button 
                   type="button" 
+                  className="submit-btn"
                   style={styles.submitButton}
                   onClick={handleSubmit}
                 >
@@ -457,11 +573,12 @@ export default function AuthPages() {
 
             {/* Signup Form */}
             {currentPage === 'signup' && (
-              <div style={styles.formContainer}>
-                <div style={styles.formRow}>
+              <div style={styles.formContainer} className="fade-in">
+                <div style={styles.formRow} className="form-group">
                   <div style={styles.formGroup}>
                     <label style={styles.label} htmlFor="firstName">First Name</label>
                     <input
+                      className="form-input"
                       style={styles.input}
                       type="text"
                       id="firstName"
@@ -474,6 +591,7 @@ export default function AuthPages() {
                   <div style={styles.formGroup}>
                     <label style={styles.label} htmlFor="lastName">Last Name</label>
                     <input
+                      className="form-input"
                       style={styles.input}
                       type="text"
                       id="lastName"
@@ -485,9 +603,10 @@ export default function AuthPages() {
                   </div>
                 </div>
 
-                <div style={styles.formGroup}>
+                <div style={styles.formGroup} className="form-group">
                   <label style={styles.label} htmlFor="signupEmail">Email Address</label>
                   <input
+                    className="form-input"
                     style={styles.input}
                     type="email"
                     id="signupEmail"
@@ -498,10 +617,11 @@ export default function AuthPages() {
                   />
                 </div>
 
-                <div style={styles.formGroup}>
+                <div style={styles.formGroup} className="form-group">
                   <label style={styles.label} htmlFor="signupPassword">Password</label>
                   <div style={styles.passwordContainer}>
                     <input
+                      className="form-input"
                       style={{...styles.input, paddingRight: '3rem'}}
                       type={showPassword ? "text" : "password"}
                       id="signupPassword"
@@ -520,10 +640,11 @@ export default function AuthPages() {
                   </div>
                 </div>
 
-                <div style={styles.formGroup}>
+                <div style={styles.formGroup} className="form-group">
                   <label style={styles.label} htmlFor="confirmPassword">Confirm Password</label>
                   <div style={styles.passwordContainer}>
                     <input
+                      className="form-input"
                       style={{...styles.input, paddingRight: '3rem'}}
                       type={showConfirmPassword ? "text" : "password"}
                       id="confirmPassword"
@@ -542,9 +663,10 @@ export default function AuthPages() {
                   </div>
                 </div>
 
-                <div style={styles.formGroup}>
+                <div style={styles.formGroup} className="form-group">
                   <label style={styles.label} htmlFor="skills">Skills You Can Teach (Optional)</label>
                   <textarea
+                    className="form-input"
                     style={styles.textarea}
                     id="skills"
                     name="skills"
@@ -554,7 +676,7 @@ export default function AuthPages() {
                   />
                 </div>
 
-                <div style={styles.checkboxContainer}>
+                <div style={styles.checkboxContainer} className="form-group">
                   <input
                     style={styles.checkbox}
                     type="checkbox"
@@ -570,6 +692,7 @@ export default function AuthPages() {
 
                 <button 
                   type="button" 
+                  className="submit-btn"
                   style={styles.submitButton}
                   onClick={handleSubmit}
                 >

@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext'; 
 import toast from 'react-hot-toast'; // Import toast
-import { Star, Home, User, MessageCircle, Book, Zap, Bell } from 'lucide-react'; // --- NEW ---
+import { Star, Home, User, MessageCircle, Book, Calendar, Bell } from 'lucide-react'; // --- NEW ---
 
 export default function ProfilePage() {
   const navigate = useNavigate();
@@ -1306,7 +1306,7 @@ const renderSettings = () => (
                 setHoveredButton(null);
               }}
             >
-              <Zap size={24} />
+              <Calendar size={24} />
               {hoveredButton === 'sessions' && (
                 <div style={{
                   position: 'absolute',

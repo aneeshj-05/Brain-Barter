@@ -88,7 +88,7 @@ export default function Landing() {
       alignItems: 'center'
     },
     logo: {
-      fontSize: '1.9rem',
+      fontSize: '2.025rem',
       fontWeight: '700',
       color: '#F7EFE6',
       textShadow: '0 1px 0 rgba(0,0,0,0.15)'
@@ -142,16 +142,16 @@ export default function Landing() {
     },
 
     heroTitle: {
-      fontSize: '3.2rem',
+      fontSize: '5.325rem',
       fontWeight: '700',
       marginBottom: '1rem',
       lineHeight: '1.05',
       color: '#2e1f1a',
-      fontFamily: "Arial, sans-serif",
+      fontFamily: "Libre Baskerville, serif",
       textShadow: '0 2px 0 rgba(255,255,255,0.02)'
     },
     heroText: {
-      fontSize: '1.125rem',
+      fontSize: '1.25rem',
       color: '#3a2b27',
       marginBottom: '2rem',
       opacity: 0.95,
@@ -171,7 +171,7 @@ export default function Landing() {
       borderRadius: '12px',
       border: '1px solid rgba(60,40,30,0.25)',
       boxShadow: '0 8px 20px rgba(59,47,44,0.18)',
-      fontSize: '1rem',
+      fontSize: '1.125rem',
       fontWeight: 700,
       cursor: 'pointer',
       transition: 'transform 0.24s ease, box-shadow 0.24s ease'
@@ -188,7 +188,7 @@ export default function Landing() {
       borderRadius: '12px',
       border: '1px solid rgba(60,40,30,0.25)',
       boxShadow: '0 8px 20px rgba(59,47,44,0.18)',
-      fontSize: '1rem',
+      fontSize: '1.125rem',
       fontWeight: 700,
       cursor: 'pointer',
       transition: 'transform 0.24s ease, box-shadow 0.24s ease',
@@ -206,14 +206,14 @@ export default function Landing() {
       margin: '0 auto'
     },
     sectionTitle: {
-      fontSize: '2.2rem',
+      fontSize: '2.325rem',
       fontWeight: '700',
       textAlign: 'center',
       marginBottom: '3rem',
       color: '#2e1f1a'
     },
     sectionTitleLight: {
-      fontSize: '2.2rem',
+      fontSize: '2.325rem',
       fontWeight: '700',
       textAlign: 'center',
       marginBottom: '3rem',
@@ -323,7 +323,7 @@ export default function Landing() {
     // CTA / Footer
     cta: {
       padding: '6rem 1.5rem',
-      background: 'linear-gradient(180deg, rgba(109, 78, 64, 0.15), rgba(148, 114, 104, 0.2))',
+      background: 'linear-gradient(180deg, rgba(206, 186, 177, 0.15), rgba(148, 114, 104, 0.2))',
       textAlign: 'center',
       borderTop: '1px solid rgba(59, 47, 44, 0.1)',
       position: 'relative'
@@ -409,7 +409,7 @@ export default function Landing() {
         {/* Enhanced CSS for animations & responsive design */}
         <style>{`
           * {
-            font-family: 'Arial', sans-serif !important;
+            font-family: 'Libre Baskerville', serif !important;
           }
 
           /* Hide scrollbar */

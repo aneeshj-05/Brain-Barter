@@ -38,7 +38,7 @@ const MyMatches = () => {
 
   return (
     <div>
-      <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "1.5rem", color: "#4b3b34" }}>My Matches</h2>
+      <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "1.5rem", color: "#4b3b34", fontFamily: "Arial, sans-serif" }}>My Matches</h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
         {matches.map((match) => (
           <div key={match._id} style={{

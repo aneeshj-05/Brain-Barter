@@ -88,15 +88,21 @@ const SkillsExplorer = () => {
       color: '#4b3b34',
       overflow: 'hidden',
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      fontFamily: 'Arial, sans-serif'
     },
     navbar: {
       backgroundColor: '#4b3b34',
       color: '#f5ede6',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
       padding: '1rem 2rem',
       display: 'flex',
       alignItems: 'center',
-      gap: '1rem'
+      justifyContent: 'space-between',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: '50px'
     },
     backBtn: {
       backgroundColor: 'transparent',
@@ -302,10 +308,12 @@ const SkillsExplorer = () => {
   return (
     <div style={styles.container}>
       <div style={styles.navbar}>
-        <button style={styles.backBtn} onClick={() => navigate('/dashboard')}>
-          <ArrowLeft size={20} />
-        </button>
-        <div style={styles.title}>Skills Explorer</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          <button style={styles.backBtn} onClick={() => navigate('/dashboard')}>
+            <ArrowLeft size={20} />
+          </button>
+          <div style={styles.title}>Skills Explorer</div>
+        </div>
       </div>
 
       <div style={styles.main} className="scrollable-main">

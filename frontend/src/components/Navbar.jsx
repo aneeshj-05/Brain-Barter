@@ -27,7 +27,7 @@ export default function Navbar() {
       alignItems: 'center'
     },
     logo: {
-      fontSize: '2rem',
+      fontSize: '2.125rem',
       fontWeight: 'bold',
       color: '#EDE3DB',
       textDecoration: 'none',
@@ -46,7 +46,7 @@ export default function Navbar() {
       borderRadius: '0.5rem',
       padding: '0.5rem 1rem',
       cursor: 'pointer',
-      fontSize: '1rem'
+      fontSize: '1.125rem'
     },
     authButton: {
       textDecoration: 'none',
@@ -56,7 +56,7 @@ export default function Navbar() {
       borderRadius: '0.5rem',
       padding: '0.5rem 1rem',
       cursor: 'pointer',
-      fontSize: '1rem',
+      fontSize: '1.125rem',
     },
     // --- NEW --- Styles for the chat button and badge
     chatBtn: {
@@ -70,7 +70,7 @@ export default function Navbar() {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      fontSize: '1rem',
+      fontSize: '1.125rem',
       gap: '0.5rem' // Space between icon and text
     },
     badge: {

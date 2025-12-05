@@ -95,6 +95,7 @@ export default function AuthPages() {
     body: {
       overflowX: 'hidden',
       fontFamily: 'Arial, sans-serif',
+
       backgroundColor: '#402E2A',
       color: '#EDE3DB',
       lineHeight: '1.6',
@@ -286,7 +287,7 @@ export default function AuthPages() {
       outline: 'none',
       resize: 'vertical',
       minHeight: '100px',
-      fontFamily: 'inherit',
+      fontFamily: 'Arial, sans-serif',
       boxSizing: 'border-box',
       transform: 'translateY(0)'
     },
@@ -370,10 +371,8 @@ export default function AuthPages() {
     <div style={styles.body}>
       {/* Enhanced CSS for animations */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap');
-        
         * {
-          font-family: 'Lora', serif !important;
+          font-family: 'Arial, sans-serif' !important;
         }
 
         /* Smooth animations for form elements */

@@ -45,7 +45,8 @@ function GlobalDeleteModal() {
       fontSize: '1.5rem',
       fontWeight: 'bold',
       marginBottom: '1rem',
-      color: '#4b3b34'
+      color: '#4b3b34',
+      fontFamily: 'Libre Baskerville, serif'
     },
     message: {
       fontSize: '1rem',

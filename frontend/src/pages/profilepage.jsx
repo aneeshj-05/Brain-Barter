@@ -277,7 +277,7 @@ export default function ProfilePage() {
 
   const styles = {
     body: {
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      fontFamily: "Arial, sans-serif",
       backgroundColor: '#EDE3DB',
       color: '#402E2A',
       lineHeight: '1.6',

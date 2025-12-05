@@ -178,7 +178,8 @@ const SessionsCalendar = () => {
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
-      direction: 'ltr'
+      direction: 'ltr',
+      fontFamily: 'Arial, sans-serif'
     },
     navbar: {
       backgroundColor: '#4b3b34',
@@ -247,7 +248,7 @@ const SessionsCalendar = () => {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: '0.5rem'
+      marginBottom: '2rem'
     },
     monthNav: {
       display: 'flex',
@@ -293,11 +294,13 @@ const SessionsCalendar = () => {
       cursor: 'pointer',
       position: 'relative',
       display: 'flex',
-      flexDirection: 'column'
+      alignItems: 'center',
+      justifyContent: 'center'
     },
     dayNumber: {
       fontWeight: 'bold',
-      marginBottom: '0.5rem'
+      fontSize: '1.2rem',
+      color: '#4b3b34'
     },
     sessionItem: {
       position: 'absolute',
@@ -463,6 +466,7 @@ const SessionsCalendar = () => {
       backgroundColor: '#fff',
       borderRadius: '20px',
       padding: '2rem',
+      fontFamily: 'Arial, sans-serif',
       boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
       animation: 'clockAppear 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
       minWidth: '320px',
@@ -637,7 +641,11 @@ const SessionsCalendar = () => {
                     style={{
                       ...styles.dayCell,
                       opacity: isCurrentMonth ? 1 : 0.3,
-                      backgroundColor: isCurrentMonth ? '#fff' : '#f9f9f9'
+                      backgroundColor: daySessions.length > 0 && isCurrentMonth 
+                        ? '#f4ede4' 
+                        : isCurrentMonth 
+                        ? '#fff' 
+                        : '#f9f9f9'
                     }}
                     onClick={() => {
                       const today = new Date();
@@ -648,7 +656,31 @@ const SessionsCalendar = () => {
                       }
                     }}
                   >
-                    <div style={styles.dayNumber}>{day.getDate()}</div>
+                    {daySessions.length > 0 ? (
+                      <div
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '50%',
+                          backgroundColor: '#8b6b5c',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#fff',
+                          fontSize: '1.2rem',
+                          fontWeight: 'bold',
+                          cursor: 'pointer'
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openModal(daySessions[0]);
+                        }}
+                      >
+                        {day.getDate()}
+                      </div>
+                    ) : (
+                      <div style={styles.dayNumber}>{day.getDate()}</div>
+                    )}
                     {daySessions.length > 0 && (() => {
                       const today = new Date();
                       today.setHours(23, 59, 59, 999);
@@ -661,28 +693,27 @@ const SessionsCalendar = () => {
                         <div
                           style={{
                             position: 'absolute',
-                            bottom: '4px',
-                            right: '4px',
-                            width: '12px',
-                            height: '12px',
+                            top: '2px',
+                            right: '2px',
+                            width: '20px',
+                            height: '20px',
                             borderRadius: '50%',
                             background: isCompleted 
-                              ? 'linear-gradient(135deg, #22c55e, #16a34a)'
+                              ? 'linear-gradient(135deg, #8b6b5c, #6d5447)'
                               : isToday
-                              ? 'linear-gradient(135deg, #f59e0b, #d97706)'
-                              : daySessions.length > 1
                               ? 'linear-gradient(135deg, #d4a574, #8b6b5c)'
                               : 'linear-gradient(135deg, #8b6b5c, #6d5447)',
                             boxShadow: isCompleted
-                              ? '0 2px 6px rgba(34, 197, 94, 0.4)'
+                              ? '0 3px 8px rgba(139, 107, 92, 0.6)'
                               : isToday
-                              ? '0 2px 6px rgba(245, 158, 11, 0.4)'
-                              : '0 2px 4px rgba(139, 107, 92, 0.4)',
+                              ? '0 3px 8px rgba(212, 165, 116, 0.6)'
+                              : '0 3px 8px rgba(139, 107, 92, 0.4)',
+                            border: isCompleted ? '2px solid #f5ede6' : '2px solid transparent',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '8px',
+                            fontSize: '10px',
                             color: '#fff',
                             fontWeight: 'bold',
                             transition: 'all 0.3s ease',
@@ -774,8 +805,8 @@ const SessionsCalendar = () => {
                       animation: 'filterDropdown 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                     }}>
                       {[
-                        { value: 'upcoming', label: 'Upcoming Sessions', icon: '📅' },
-                        { value: 'previous', label: 'Previous Sessions', icon: '📋' }
+                        { value: 'upcoming', label: 'Upcoming Sessions' },
+                        { value: 'previous', label: 'Previous Sessions' }
                       ].map((option, index) => (
                         <button
                           key={option.value}

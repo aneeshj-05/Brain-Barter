@@ -23,6 +23,7 @@ const styles = {
     maxWidth: '500px',
     width: '90%',
     boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+    fontFamily: 'Arial, sans-serif',
   },
   videoCallHeader: {
     textAlign: 'center',

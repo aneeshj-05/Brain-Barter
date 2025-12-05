@@ -5,13 +5,14 @@ import { Search, Users, Book, Calendar, Globe, TrendingUp, MessageCircle, Bell, 
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { AuthContext } from '../context/AuthContext';
+import Footer from '../components/Footer';
 
 const styles = {
   body: {
     height: "100vh",
     backgroundColor: "#f5ede6",
     color: "#4b3b34",
-    fontFamily: "Arial, sans-serif",
+    fontFamily: "Libre Baskerville, serif",
     margin: 0,
     padding: 0,
     overflow: "hidden",
@@ -33,7 +34,7 @@ const styles = {
   },
   logoText: {
     fontWeight: "bold",
-    fontSize: "2rem",
+    fontSize: "2.125rem",
     color: "#f5ede6",
   },
   navLink: {
@@ -50,7 +51,7 @@ const styles = {
   bellBtn: {
     backgroundColor: "transparent",
     color: "#ffffff",
-    fontSize: "16px",
+    fontSize: "18px",
     padding: "0.75rem",
     borderRadius: "8px",
     border: "2px solid #EDE3DB",
@@ -166,7 +167,7 @@ const styles = {
   chatBtn: {
     backgroundColor: "transparent",
     color: "#ffffff",
-    fontSize: "16px",
+    fontSize: "18px",
     padding: "0.75rem",
     borderRadius: "8px",
     border: "2px solid #EDE3DB",
@@ -204,7 +205,7 @@ const styles = {
     marginTop: '2rem'
   },
   heading: {
-    fontSize: "2.7rem",
+    fontSize: "2.825rem",
     fontWeight: "bold",
     marginTop: '0',
     marginBottom: "1rem",
@@ -212,7 +213,7 @@ const styles = {
   },
   subHeading: {
     color: "#6a5b53",
-    fontSize: "1.3rem",
+    fontSize: "1.425rem",
     marginBottom: "2rem",
     maxWidth: "600px",
     margin: "0 auto 2rem",
@@ -269,7 +270,7 @@ const styles = {
     marginBottom: "0.5rem",
   },
   sectionTitle: {
-    fontSize: "1.5rem",
+    fontSize: "1.625rem",
     fontWeight: "bold",
     marginBottom: "1.5rem",
     color: "#4b3b34",
@@ -477,12 +478,17 @@ const styles = {
     backgroundColor: "#4b3b34",
     color: "#f5ede6",
     width: "100%",
-    height: "56px",        // compact height
+    height: "56px",
     display: "flex",
-    alignItems: "center",  // vertically center the text
-    padding: "0 1.5rem",   // LEFT padding only so text isn't glued to the border
+    alignItems: "center",
+    padding: "0 1.5rem",
     boxSizing: "border-box",
     flexShrink: 0,
+     // Change position to absolute
+    bottom: 0, // Set bottom to 0
+    left: 0, // Set left to 0
+    right: 0, // Set right to 0
+    // ...
   },
   footerContainer: {
     maxWidth: "1200px",
@@ -1739,7 +1745,7 @@ export default function Dashboard() {
         <section style={styles.hero}>
           <h1 style={styles.heading}>Welcome to Brain Barter</h1>
           <p style={styles.subHeading}>
-            Swap What You Know, Learn What You Don't!
+            Share What You Know, Learn What You Don't!
           </p>
         </section>
         {fetchError && (
@@ -2277,7 +2283,7 @@ export default function Dashboard() {
                       }}>
                         {normalized.matchingSkillsTheyHave.length > 0 && !normalized.matchingSkillsTheyHave.includes('General skills') && (
                           <div style={{ marginBottom: "0.75rem" }}>
-                            <div style={styles.skillLabel}>They wanted to learn from u:</div>
+                            <div style={styles.skillLabel}>They want to learn from you:</div>
                             <div style={styles.skillTags}>
                               {normalized.matchingSkillsTheyHave.map((skill, idx) => (
                                 <span key={idx} style={styles.skillTag}>{skill}</span>
@@ -2288,7 +2294,7 @@ export default function Dashboard() {
 
                         {normalized.matchingSkillsIHave.length > 0 && (
                           <div>
-                            <div style={styles.skillLabel}>You wanna learn from them:</div>
+                            <div style={styles.skillLabel}>You like to learn from them:</div>
                             <div style={styles.skillTags}>
                               {normalized.matchingSkillsIHave.map((skill, idx) => (
                                 <span key={idx} style={styles.skillTag}>{skill}</span>
@@ -2565,19 +2571,7 @@ export default function Dashboard() {
       )}
 
 
-
-
-
-      {/* Footer */}
-      <footer style={styles.footer}>
-        <div style={styles.footerContainer}>
-          <div style={styles.footerBottom}>
-            <div style={styles.footerCopyright}>
-              © 2025 Brain Barter. All rights reserved.
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

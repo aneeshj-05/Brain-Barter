@@ -882,7 +882,7 @@ const unblockUser = async (userId) => {
       overflow: "hidden",
     },
     sidebar: {
-      width: "350px",
+      width: "450px",
       backgroundColor: "#fff",
       borderRight: "1px solid #e0d5cc",
       display: "flex",

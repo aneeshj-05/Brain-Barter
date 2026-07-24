@@ -1,0 +1,45 @@
+/* Global font family for Brain Barter application */
+* {
+  font-family: 'Libre Baskerville', serif !important;
+}
+
+body {
+  font-family: 'Libre Baskerville', serif !important;
+  margin: 0;
+  padding: 0;
+  font-size: 18px; /* Base font size increased by 2px from default 16px */
+}
+
+/* Ensure all text elements use Libre Baskerville and increased font sizes */
+h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, label, a {
+  font-family: 'Libre Baskerville', serif !important;
+}
+
+/* Global font size increases */
+h1 { font-size: calc(2rem + 2px) !important; }
+h2 { font-size: calc(1.5rem + 2px) !important; }
+h3 { font-size: calc(1.17rem + 2px) !important; }
+h4 { font-size: calc(1rem + 2px) !important; }
+h5 { font-size: calc(0.83rem + 2px) !important; }
+h6 { font-size: calc(0.67rem + 2px) !important; }
+p, span, div, button, input, textarea, select, label, a {
+  font-size: inherit;
+}
+
+/* Component-specific font size overrides */
+.navbar-text { font-size: calc(1rem + 2px) !important; }
+.footer-text { font-size: calc(1rem + 2px) !important; }
+.button-text { font-size: calc(1rem + 2px) !important; }
+.input-text { font-size: calc(1rem + 2px) !important; }
+.small-text { font-size: calc(0.875rem + 2px) !important; }
+.large-text { font-size: calc(1.125rem + 2px) !important; }
+.hero-title { font-size: calc(3.2rem + 2px) !important; }
+.hero-text { font-size: calc(1.125rem + 2px) !important; }
+.section-title { font-size: calc(2.2rem + 2px) !important; }
+
+/* Override any other font declarations */
+.MuiTypography-root,
+.ant-typography,
+.chakra-text {
+  font-family: 'Libre Baskerville', serif !important;
+}

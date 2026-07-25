@@ -23,7 +23,6 @@ Collaborative learning platform for skill and knowledge exchange.
 - [Data models (representative)](#data-models-representative)
 - [Deployment notes](#deployment-notes)
 - [Contributing](#contributing)
-- [License](#license)
 - [Contact / Author](#contact--author)
 
 ---
@@ -211,13 +210,6 @@ Please follow standard GitHub PR practices and add a descriptive changelog entry
 
 ---
 
-## License
-Add a license (e.g., MIT) by creating a `LICENSE` file. If you want, we can add an appropriate license file for you.
-
----
-
 ## Contact / Author
 Project: Brain-Barter  
 Repo: https://github.com/aneeshj-05/Brain-Barter
-
-If you need help improving docs, adding a CI workflow, Dockerfiles, or deployment guidance, open an issue or a PR and I can help prepare the changes.

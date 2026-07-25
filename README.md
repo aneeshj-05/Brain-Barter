@@ -206,8 +206,6 @@ Check `backend/models/` to see the full Mongoose schema definitions and validati
 3. Make changes, add tests if applicable.
 4. Open a pull request with a clear description of changes.
 
-Please follow standard GitHub PR practices and add a descriptive changelog entry for bigger changes. If you plan to add external services (payments, video provider changes), update the README with required provider keys and environment configs.
-
 ---
 
 ## Contact / Author
